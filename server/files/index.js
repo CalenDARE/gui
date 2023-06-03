@@ -4,7 +4,17 @@ function deleteMovie(imdbID) {
   /* Task 3.1. Add an XMLHttpRequest that send a DELTETE request to the /movies/:imdbID endpoint. 
      Task 3.3. Upon successful deletion, remove the article element corresponding to the deleted 
                movie from the DOM. */
-
+  const xhr = new XMLHttpRequest();
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      document.getElementById(imdbID).remove();
+      console.log("Success: Movie deleted");
+    } else {
+      console.error("ERROR WHILE DELETING MOVIE: " + imdbID);
+    }
+  }
+  xhr.open("DELETE", '/movies/' + imdbID);
+  xhr.send()
 }
 
 function loadMovies(genre) {

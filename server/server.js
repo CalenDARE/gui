@@ -3,6 +3,7 @@ const path = require("path");
 const http = require("http");
 const bodyParser = require("body-parser");
 const movieModel = require("./movie-model.js");
+const axios = require("axios")
 
 const app = express();
 
@@ -59,13 +60,94 @@ app.get("/genres", function (req, res) {
    a list of the results you obtain. Only include the properties 
    mentioned in the README when sending back the results to the client */
 
+app.get("/search", function (req, res) {
+  const query = req.query.query;
+  if (!query) {
+    res.sendStatus(400);
+    return;
+  }
+
+  http.get('http://www.omdbapi.com/?apikey=a6323e7d&s=\'' + req.query.query + '\'', (resp) => {
+    let data = [];
+    resp.on('data', (chunk) => {
+      data = JSON.parse(chunk).Search;
+      if (data != null) {
+        for (movie of data) {
+          delete movie.Type;
+          delete movie.Poster;
+          movie.Year = Number(movie.Year);
+        }
+      } else {
+        data = "[]"
+      }
+    });
+    resp.on('end', () => {
+      console.log("Response ended")
+      res.send(data);
+    })
+  }).on('error', err => {
+    console.log('Error: ', err.message);
+  });
+});
+
 /* Task 2.2 Add a POST /movies endpoint that receives an array of imdbIDs that the
    user selected to be added to the movie collection. Search them on omdbapi.com,
    convert the data to the format we use since exercise 1 and add the data to the
    movie collection. */
 
+app.post("/movies", async (req, res) => {
+  const idList = req.body;
+
+  const movieList = await Promise.all(
+    idList.map(async (imdbID) => {
+        const omdbApiUrl = 'http://www.omdbapi.com/?apikey=a6323e7d&i=' + imdbID;
+  
+        const output = await axios.get(omdbApiUrl);
+        const movieData = output.data;
+        const movie = transformMovie(movieData);
+  
+        movieModel[imdbID] = movie;
+        console.log("debug here!!!!! " + JSON.stringify(movie));
+
+        return movie;
+    })
+  );
+
+  console.log("debug here!!! 5")
+  res.sendStatus(200);
+
+});
+
+function transformMovie(data) {
+  return movie = {
+    imdbID: data.imdbID,
+    Title: data.Title,
+    Released: new Date(data.Released).toISOString().split('T')[0],
+    Runtime: data.Runtime === 'N/A' ? null : parseInt(data.Runtime),
+    Genres: data.Genre.split(',').map((genre) => genre.trim()),
+    Directors: data.Director.split(',').map((director) => director.trim()),
+    Writers: data.Writer.split(',').map((writer) => writer.trim()),
+    Actors: data.Actors.split(',').map((actor) => actor.trim()),
+    Plot: data.Plot,
+    Poster: data.Poster,
+    Metascore: data.Metascore === 'N/A' ? null : parseInt(data.Metascore),
+    imdbRating: parseFloat(data.imdbRating),
+  };
+}
 /* Task 3.2. Add the DELETE /movies/:imdbID endpoint which removes the movie
    with the given imdbID from the collection. */
+
+app.delete("/movies/:imdbID", (req, res) => {
+  const id = req.params.imdbID;
+  const exists = id in movieModel;
+
+  if (!exists) {
+    res.sendStatus(404);
+  } else {
+    delete movieModel[id];
+    res.sendStatus(200);
+  }
+});
 
 app.listen(3000);
 
