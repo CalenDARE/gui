@@ -107,13 +107,11 @@ app.post("/movies", async (req, res) => {
         const movie = transformMovie(movieData);
   
         movieModel[imdbID] = movie;
-        console.log("debug here!!!!! " + JSON.stringify(movie));
 
         return movie;
     })
   );
 
-  console.log("debug here!!! 5")
   res.sendStatus(200);
 
 });
