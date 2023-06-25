@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leagues</title>
+  <link rel="stylesheet" href="leagues1.css" />
+  <script src="leagues1.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <div class="navbar">
+      <div class="navbar-title">calenDARE</div>
+      <div class="navbar-search">
+        <input type="text" placeholder="Search">
+      </div>
+      <div class="navbar-buttons">
+        <a href="profile.html">
+          <img src="images/profile.png">
+        </a>
+        <a href="leagues1.html">
+          <img src="images/league.png">
+        </a>
+      </div>
+    </div>
+
+    <div class="sports-container">
+      <div class="sport" onclick="showGames('football')">
+        <img src="images/football.png" alt="Football" class="sport-icon">
+        <div class="sport-name">Football</div>
+      </div>
+      <div class="sport" onclick="showGames('basketball')">
+        <img src="images/basketball.png" alt="Basketball" class="sport-icon">
+        <div class="sport-name">Basketball</div>
+      </div>
+      <div class="sport" onclick="showGames('esports')">
+        <img src="images/esports.png" alt="esports" class="sport-icon">
+        <div class="sport-name">eSports</div>
+      </div>
+    </div>
+
+    <div id="games-container" class="games-container"></div>
+  </div>
+
+  <script>
+    function showGames(sport) {
+      const gamesContainer = document.getElementById('games-container');
+      gamesContainer.innerHTML = '';
+
+      const games = fetchGames(sport);
+
+      games.forEach((game) => {
+        const gameElement = document.createElement('div');
+        gameElement.classList.add('game');
+        gameElement.textContent = game;
+        gamesContainer.appendChild(gameElement);
+      });
+
+      //um auf der selben page zu bleiben aber neues '/' anzusprechen
+      const newURL = `/${sport}`;
+      history.pushState(null, '', newURL);
+    }
+
+    function fetchGames(sport) {
+      const gamesBySport = {
+        football: ['Game 1', 'Game 2', 'Game 3'],
+        basketball: ['Game A', 'Game B', 'Game C'],
+        esports: ['Game X', 'Game Y', 'Game Z'],
+      };
+
+      return gamesBySport[sport] || [];
+    }
+  </script>
+</body>
+</html>

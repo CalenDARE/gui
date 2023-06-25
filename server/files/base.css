@@ -1,6 +1,6 @@
 body {
   font-family: "Trebuchet MS", sans-serif;
-  background-color: brown;
+  background-color: #2c3596;
   color: beige;
 }
 
@@ -13,6 +13,7 @@ button {
     border-width: 1px;
     border-radius: 4px;
     font-size: 105%;
+    color: white;
 }
 
 button:hover {
