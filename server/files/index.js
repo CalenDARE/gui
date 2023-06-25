@@ -1,72 +1,37 @@
-import { ButtonBuilder, ElementBuilder, MovieBuilder } from "./builders.js";
+let switchCtn = document.querySelector("#switch-cnt");
+let switchC1 = document.querySelector("#switch-c1");
+let switchC2 = document.querySelector("#switch-c2");
+let switchCircle = document.querySelectorAll(".switch__circle");
+let switchBtn = document.querySelectorAll(".switch-btn");
+let aContainer = document.querySelector("#a-container");
+let bContainer = document.querySelector("#b-container");
+let allButtons = document.querySelectorAll(".submit");
 
-function deleteMovie(imdbID) {
-  /* Task 3.1. Add an XMLHttpRequest that send a DELTETE request to the /movies/:imdbID endpoint. 
-     Task 3.3. Upon successful deletion, remove the article element corresponding to the deleted 
-               movie from the DOM. */
-  const xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    if (xhr.status === 200) {
-      document.getElementById(imdbID).remove();
-      console.log("Success: Movie deleted");
-    } else {
-      console.error("ERROR WHILE DELETING MOVIE: " + imdbID);
-    }
-  }
-  xhr.open("DELETE", '/movies/' + imdbID);
-  xhr.send()
+let getButtons = (e) => e.preventDefault()
+
+let changeForm = (e) => {
+
+    switchCtn.classList.add("is-gx");
+    setTimeout(function(){
+        switchCtn.classList.remove("is-gx");
+    }, 1500)
+
+    switchCtn.classList.toggle("is-txr");
+    switchCircle[0].classList.toggle("is-txr");
+    switchCircle[1].classList.toggle("is-txr");
+
+    switchC1.classList.toggle("is-hidden");
+    switchC2.classList.toggle("is-hidden");
+    aContainer.classList.toggle("is-txl");
+    bContainer.classList.toggle("is-txl");
+    bContainer.classList.toggle("is-z200");
 }
 
-function loadMovies(genre) {
-  const xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    const mainElement = document.querySelector("main");
-
-    while (mainElement.childElementCount > 0) {
-      mainElement.firstChild.remove()
-    }
-
-    if (xhr.status === 200) {
-      JSON.parse(xhr.responseText)
-        .forEach(movie => new MovieBuilder(movie, deleteMovie).appendTo(mainElement))
-    } else {
-      mainElement.append(`Daten konnten nicht geladen werden, Status ${xhr.status} - ${xhr.statusText}`);
-    }
-  }
-
-  const url = new URL("/movies", location.href)
-  
-  if (genre) {
-    url.searchParams.set("genre", genre)
-  }
-
-  xhr.open("GET", url)
-  xhr.send()
+let mainF = (e) => {
+    for (var i = 0; i < allButtons.length; i++)
+        allButtons[i].addEventListener("click", getButtons );
+    for (var i = 0; i < switchBtn.length; i++)
+        switchBtn[i].addEventListener("click", changeForm)
 }
 
-window.onload = function () {
-  const xhr = new XMLHttpRequest();
-  xhr.onload = function () {
-    const listElement = document.querySelector("#search");
-
-    if (xhr.status === 200) {
-      const genres = JSON.parse(xhr.responseText);
-      new ElementBuilder("li").append(new ButtonBuilder("All").onclick(() => loadMovies()))
-        .appendTo(listElement)
-
-      for (const genre of genres) {
-        new ElementBuilder("li").append(new ButtonBuilder(genre).onclick(() => loadMovies(genre)))
-          .appendTo(listElement)
-      }
-
-      const firstButton = document.querySelector("nav button");
-      if (firstButton) {
-        firstButton.click();
-      }
-    } else {
-      listElement.append(`Daten konnten nicht geladen werden, Status ${xhr.status} - ${xhr.statusText}`);
-    }
-  };
-  xhr.open("GET", "/genres");
-  xhr.send();
-};
+window.addEventListener("load", mainF);

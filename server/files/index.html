@@ -1,39 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movies!</title>
-    <link rel="stylesheet" href="index.css" />
-    <script type="module" src="index.js"></script>
-  </head>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page in HTML with CSS Code Example</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="index.css" rel="stylesheet">
 
-  <body>
-    <header>
-      <h1>Movies!</h1>
-    </header>
-    <nav>
-      <h2>Genres</h2>
-      <ul id="search"></ul>
-      <h2>Manage</h2>
-      <ul>
-        <li>
-          <button onclick="location.href='search.html'">Add movies</button>
-        </li>
-      </ul>
-    </nav>
-    <main></main>
-    <footer>
-      <ul>
-        <li>&copy; Movies!</li>
-        <li>&#8213;</li>
-        <li>Written by <a href="mailto:jane.doe@example.com">Jane Doe</a></li>
-        <li>&#8213;</li>
-        <li>
-          Visit us at
-          <a href="https://www.fh-campuswien.ac.at/" target="_blank">UAS Campus Vienna</a>
-        </li>
-      </ul>
-    </footer>
-  </body>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"><link rel="stylesheet" href="./style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="index.js"></script>
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="box-form">
+	<div class="left">
+		<div class="overlay">
+		<h1>calenDARE</h1>
+		<p></p>
+	
+		</div>
+	</div>
+	
+		<div class="right">
+		<h5>Login</h5>
+		<p>Don't have an account? <a href="createaccount.html">Create account</a> we manage your scheduling</p>
+		<div class="inputs">
+			<input type="text" placeholder="username">
+			<br>
+			<input type="password" placeholder="password">
+		</div>
+			
+			<br><br>
+			
+		<div class="remember-me--forget-password">
+				<!-- Angular -->
+	<label>
+		<input type="checkbox" name="item" checked/>
+		<span class="text-checkbox">Remember me</span>
+	</label>
+			<p>forgot password?</p>
+		</div>
+			
+			<br>
+			<button type="button" onclick="location.href = 'homepage.html'">Login</button>
+	</div>
+	
+</div>
+<!-- partial -->
+  
+</body>
 </html>

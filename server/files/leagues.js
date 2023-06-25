@@ -68,17 +68,7 @@ function putMovie() {
 
 }
 
-/** Loading and setting the movie data for the movie with the passed imdbID */
-const imdbID = new URLSearchParams(window.location.search).get("imdbID");
-
-const xhr = new XMLHttpRequest();
-xhr.open("GET", "/movies/" + imdbID);
-xhr.onload = function() {
-  if (xhr.status === 200) {
-    setMovie(JSON.parse(xhr.responseText));
-  } else {
-    alert("Loading of movie data failed. Status was " + xhr.status + " - " + xhr.statusText);
-  } 
+function loadMovies(genre) {
+  console.log("test");
 }
 
-xhr.send()

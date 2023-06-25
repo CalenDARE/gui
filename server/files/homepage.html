@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="homepage.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <title>calenDARE</title>
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-title">calenDARE</div>
+    <div class="navbar-search">
+        <input type="text" placeholder="Search">
+    </div>
+    <div class="navbar-buttons">
+        <a href="profile.html" class="profile-button">Profile</a>
+        <a href="leagues.html" class="favorites-button">Favorites</a>
+    </div>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> <!--flatpickr for datepickign?-->
+
+    <div class="cal-modal-container">
+        <div class="cal-modal">
+            <h3>UPCOMING EVENTS</h3>
+            <div id="calendar">
+                <div class="placeholder"></div>
+                <div class="calendar-events"></div>
+            </div>
+        </div>
+        <div id="event-details" class="event-details"></div>
+    </div>
+    
+
+    <script src="homepage.js"></script>
+
+</body>
+</html>

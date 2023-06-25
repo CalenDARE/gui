@@ -48,12 +48,24 @@ app.put("/movies/:imdbID", function (req, res) {
   }
 });
 
-app.get("/genres", function (req, res) {
-  const genres = [
-    ...new Set(Object.values(movieModel).flatMap((movie) => movie.Genres)),
-  ];
-  genres.sort();
-  res.send(genres);
+app.get("/leagues", function (req, res) {
+  http.get('http://localhost:8080/data-service/football/leagues', (resp) => {
+    let data = [];
+    resp.on('data', (chunk) => {
+      data = JSON.parse(chunk).response;
+      if (data != null) {
+
+      } else {
+        data = "[]"
+      }
+    });
+    resp.on('end', () => {
+      console.log("Response ended")
+      res.send(data);
+    })
+  }).on('error', err => {
+    console.log('Error: ', err.message);
+  });
 });
 
 /* Task 1.1. Add the GET /search endpoint: Query omdbapi.com and return
@@ -67,7 +79,7 @@ app.get("/search", function (req, res) {
     return;
   }
 
-  http.get('http://www.omdbapi.com/?apikey=a6323e7d&s=\'' + req.query.query + '\'', (resp) => {
+  http.get('http://localhost:8080/data-service/football/leagues', (resp) => {
     let data = [];
     resp.on('data', (chunk) => {
       data = JSON.parse(chunk).Search;
