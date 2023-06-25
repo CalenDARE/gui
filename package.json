@@ -1,13 +1,11 @@
 {
-  "name": "web-23-exercise-1",
+  "name": "calendare",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
-    "start-nodemon": "nodemon server/server.js",
-    "test": "npx cypress run",
-    "cypress": "npx cypress open"
+    "start-nodemon": "nodemon server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +16,6 @@
     "axios": "^1.4.0"
   },
   "devDependencies": {
-    "cypress": "^12.5.1",
     "nodemon": "^2.0.20"
   }
 }
