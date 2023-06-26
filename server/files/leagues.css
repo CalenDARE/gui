@@ -166,8 +166,7 @@ h1, h2, p, a, span{
 	text-align: center;
 	margin: 0 auto;
 	border-radius: 5px;
-	-webkit-transition: background .3s;
-	transition: background .3s;
+
 }
 	.button:hover {
 		text-decoration: none;
@@ -240,12 +239,7 @@ h1, h2, p, a, span{
 
 /** MAIN CONTAINER **/
 
-.main-container {
-	font-family: 'Ubuntu', sans-serif;
-	width: 950px;
-	height: 1725px;
-	margin: 6em auto;
-}	
+
 	/*********************************************** HEADER ***********************************************/
 	header {
 		height: 80px;
