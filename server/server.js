@@ -141,16 +141,28 @@ function transformFootballData(data) {
 }
 
 
-app.get('/lec', function (req, res) {
+app.get('/LEC', function (req, res) {
   callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4197', res)
 });
 
-app.get('/lcs', function (req, res) {
+app.get('/LCS', function (req, res) {
   callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4198', res)
 });
 
-app.get('/lck', function (req, res) {
+app.get('/LCK', function (req, res) {
   callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=293', res)
+});
+
+app.get('/EPL', function (req, res) {
+  callScheduleApi('http://localhost:8080/data-service/dota2/schedule?id=4807', res)
+});
+
+app.get('/EMEA', function (req, res) {
+  callScheduleApi('http://localhost:8080/data-service/valorant/schedule?id=4947', res)
+});
+
+app.get('/PACIFIC', function (req, res) {
+  callScheduleApi('http://localhost:8080/data-service/valorant/schedule?id=4531', res)
 });
 
 

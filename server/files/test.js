@@ -4,7 +4,7 @@ function addLeagues(sport) {
     } else if (sport == "basketball") {
         appendHeader("NBA", "EuroLeague")
     } else if (sport == "lol") {
-        appendHeader("lec", "lcs", "lck")
+        appendHeader("LEC", "LCS", "LCK")
     }
 }
 
@@ -63,14 +63,55 @@ function getData(source) {
 
 function appendMatches(data) {
     const bodyElement = document.querySelector("body")
-    const matches = document.createElement("div")
+    const matches = document.createElement("table")
     matches.id = "matches"
+    matches.classList.add("centered-container")
+  
     for (const match of data) {
-        const matchDiv = document.createElement("div")
-        const matchA = document.createElement("a")
-        matchA.textContent = match.eventID
-        matchDiv.appendChild(matchA)
-        matches.appendChild(matchDiv)
+        const tableRow = document.createElement("tr")
+        const addToFavoritesButton = document.createElement("button")
+
+        const homeLogoCol = document.createElement("td")
+        const awayLogoCol = document.createElement("td")
+        const homeTeamCol = document.createElement("td")
+        const awayTeamCol = document.createElement("td")
+        const vsListCol = document.createElement("td")
+        const dateListCol = document.createElement("td")
+
+        dateListCol.textContent = match.date
+        dateListCol.style.paddingLeft = '400px'
+        dateListCol.style.paddingRight = '100px'
+        tableRow.appendChild(dateListCol)
+
+        const homeLogo = document.createElement("img")
+        homeLogo.src = match.teams.home.logo
+        homeLogo.width = 70
+        homeLogo.height = 70
+        homeLogoCol.appendChild(homeLogo)
+        tableRow.appendChild(homeLogoCol)
+
+        homeTeamCol.textContent = match.teams.home.name
+        tableRow.appendChild(homeTeamCol)
+
+        vsListCol.textContent = "VS"
+        tableRow.appendChild(vsListCol)
+
+        awayTeamCol.textContent = match.teams.away.name
+        awayTeamCol.style.textAlign = "right"
+        tableRow.appendChild(awayTeamCol)
+
+        const awayLogo = document.createElement("img")
+        awayLogo.src = match.teams.away.logo
+        awayLogo.width = 70
+        awayLogo.height = 70
+        awayLogoCol.appendChild(awayLogo)
+        tableRow.appendChild(awayLogoCol)
+
+
+        addToFavoritesButton.textContent = "❤"
+        tableRow.appendChild(addToFavoritesButton)
+        matches.appendChild(tableRow)
     }
+  
     bodyElement.appendChild(matches)
 }
