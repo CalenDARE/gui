@@ -1,3 +1,4 @@
+
 var eventDates = {};
 var eventImg = {};
 var startDate = new Date(); // Start date
@@ -204,5 +205,62 @@ function formatDate(date) {
   let y = date.getFullYear();
   return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
 }
+
+const sampleData = {
+  "event": {
+    "id": 979987,
+    "date": "2023-06-26T16:00:00",
+    "venue": {
+      "id": 5153,
+      "name": "Ullern kunstgress",
+      "city": "Oslo"
+    }
+  },
+  "league": {
+    "id": 474,
+    "name": "2. Division - Group 2",
+    "country": "Norway",
+    "logo": "https://media-2.api-sports.io/football/leagues/474.png",
+    "flag": "https://media-3.api-sports.io/flags/no.svg",
+    "season": 2023
+  },
+  "teams": {
+    "home": {
+      "id": 7042,
+      "name": "Ullern",
+      "logo": "https://media-3.api-sports.io/football/teams/7042.png"
+    },
+    "away": {
+      "id": 12865,
+      "name": "Strømsgodset II",
+      "logo": "https://media-3.api-sports.io/football/teams/12865.png"
+    }
+  }
+};
+
+
+
+window.onload = function() {
+  const xhr = new XMLHttpRequest();
+  xhr.onload = function() {
+    if (xhr.status == 200) {
+      const data = JSON.parse(xhr.responseText);
+
+      for (const football of data) {
+        console.log(football);
+     
+     
+      }
+    } else {
+      console.log('Request failed. Status:', xhr.status);
+    }
+  };
+
+  xhr.open('GET', '/lol');
+  xhr.send();
+};
+
+
+
 
 
