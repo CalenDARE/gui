@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
 
     <link rel="stylesheet" href="test.css">
+    <script src="test.js"></script>
 
 </head>
 <body>
@@ -41,15 +42,15 @@
     <div class="header-2">
 
         <div>
-            <a class="header-menu-tab" href="#7"><span class="icon">&#9917;</span>Football</a>
+            <a class="header-menu-tab" href="#7" onclick="addLeagues('football')"><span class="icon">&#9917;</span>Football</a>
         </div>
         <div>
-            <a class="header-menu-tab" href="#9"><span class="icon">&#127936;</span>Basketball</a>
+            <a class="header-menu-tab" href="#9" onclick="addLeagues('basketball')"><span class="icon">&#127936;</span>Basketball</a>
         </div>
         <div>
-            <a class="header-menu-tab" href="lol"><span class="icon">&#127918;</span>eSports</a>
+            <a class="header-menu-tab" href="#8" onclick="addLeagues('lol')"><span class="icon">&#127918;</span>eSports</a>
         </div>
-
+    </div>
 </header>
 
 <div class="content"></div>

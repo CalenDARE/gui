@@ -141,8 +141,16 @@ function transformFootballData(data) {
 }
 
 
-app.get('/lol', function (req, res) {
+app.get('/lec', function (req, res) {
   callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4197', res)
+});
+
+app.get('/lcs', function (req, res) {
+  callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4198', res)
+});
+
+app.get('/lck', function (req, res) {
+  callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=293', res)
 });
 
 
