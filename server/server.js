@@ -189,7 +189,15 @@ app.get('/PACIFIC', function (req, res) {
 });
 
 app.get('/getAllEvents', function (req, res) {
-  http.get('http://localhost:8081/storage-service/getAllEvents', (resp) => {
+  callEventsApi("http://localhost:8081/storage-service/getAllEvents", res);
+});
+
+app.get('/getEventsForUser/:id', function (req, res) {
+  callEventsApi("http://localhost:8081/storage-service/getAllEventsForUser/" + req.params.id, res);
+});
+
+function callEventsApi(url, res) {
+  http.get(url, (resp) => {
     let data = '';
 
     resp.on('data', (chunk) => {
@@ -211,7 +219,8 @@ app.get('/getAllEvents', function (req, res) {
   }).on('error', (err) => {
     console.log('Error:', err.message);
     res.status(500).send('Error fetching data');
-})});
+  })
+};
 
 function callScheduleApi(url, res)
 {
@@ -225,14 +234,11 @@ function callScheduleApi(url, res)
     resp.on('end', () => {
       try {
         const jsonData = JSON.parse(data);
-        console.log(jsonData)
         let transformedData = [];
 
         if (jsonData.response && Array.isArray(jsonData.response)) {
           transformedData = jsonData.response.map(transformAPIData);
         }
-
-        console.log(jsonData)
 
         res.send(transformedData);
 
@@ -268,7 +274,6 @@ app.post("/addEvent", (req, res) => {
       data += chunk;
      });
      response.on('end', () => {
-       console.log(data)
         res.send(data);
      });
    });
@@ -282,34 +287,35 @@ app.post("/addEvent", (req, res) => {
    request.end();
 });
 
-app.delete("/deleteEvent", (req, res) => {
-  const postData = JSON.stringify(transformEvent(req.body));
-  http.delete("http://localhost:8081/storage-service/deleteEventById/" + postData.id, (resp) => {
-    let data = '';
+app.delete("/deleteEvent/:id", (req, res) => {
+  const postData = req.params.id;
+  const options = {
+    hostname: 'localhost',
+    port: 8081,
+    path: '/storage-service/deleteEventById/' + postData,
+     method: 'DELETE'
+   };
 
-    resp.on('data', (chunk) => {
-      data += chunk;
-    });
-
-    resp.on('end', () => {
-      try {
-        const jsonData = JSON.parse(data);
-        let transformedData = [];
-
-        if (jsonData.response && Array.isArray(jsonData.response)) {
-          transformedData = jsonData.response.map(transformAPIData);
-        }
-
-        res.send(transformedData);
-      } catch (error) {
-        console.log('Error parsing JSON:', error);
-        res.status(500).send('Error parsing JSON');
-      }
-    });
-  }).on('error', (err) => {
-    console.log('Error:', err.message);
-    res.status(500).send('Error fetching data');
-})});
+   const request = http.request(options, (response) => {
+     console.log(`STATUS: ${response.statusCode}`);
+     console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+     response.setEncoding('utf8');
+     response.on('data', (chunk) => {
+      console.log(chunk)
+     });
+     response.on('end', () => {
+        res.sendStatus(200);
+     });
+   });
+  
+   request.on('error', (e) => {
+     console.error(`problem with request: ${e.message}`);
+   });
+  
+   // Write data to request body
+   
+   request.end();
+});
 
 
 app.listen(3000);
