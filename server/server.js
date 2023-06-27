@@ -139,6 +139,21 @@ function transformAPIData(data) {
     teams: teams,
   };
 }
+function transformServerToApiData(data) {
+  const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric' };
+  const date = new Date(data.eventDate).toLocaleString('de-DE', options);
+  const date1 = new Date(data.createDate).toLocaleString('de-DE', options);
+
+  return {
+    id: data.id,
+    eventId: data.eventId,
+    eventName: data.eventName,
+    eventDate: data.eventDate,
+    createDate: data.createDate,
+    user: data.user || null
+  };
+}
+
 
 function transformEvent(data) {
   return {
@@ -173,6 +188,30 @@ app.get('/PACIFIC', function (req, res) {
   callScheduleApi('http://localhost:8080/data-service/valorant/schedule?id=4531', res)
 });
 
+app.get('/getAllEvents', function (req, res) {
+  http.get('http://localhost:8081/storage-service/getAllEvents', (resp) => {
+    let data = '';
+
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    resp.on('end', () => {
+      try {
+        const jsonData = JSON.parse(data);
+        let transformedData = [];
+        transformedData = jsonData.map(transformServerToApiData);
+        res.send(transformedData);
+
+      } catch (error) {
+        console.log('Error parsing JSON:', error);
+        res.status(500).send('Error parsing JSON');
+      }
+    });
+  }).on('error', (err) => {
+    console.log('Error:', err.message);
+    res.status(500).send('Error fetching data');
+})});
 
 function callScheduleApi(url, res)
 {
@@ -186,13 +225,17 @@ function callScheduleApi(url, res)
     resp.on('end', () => {
       try {
         const jsonData = JSON.parse(data);
+        console.log(jsonData)
         let transformedData = [];
 
         if (jsonData.response && Array.isArray(jsonData.response)) {
           transformedData = jsonData.response.map(transformAPIData);
         }
 
+        console.log(jsonData)
+
         res.send(transformedData);
+
       } catch (error) {
         console.log('Error parsing JSON:', error);
         res.status(500).send('Error parsing JSON');
@@ -269,7 +312,7 @@ app.delete("/deleteEvent", (req, res) => {
 })});
 
 
-
 app.listen(3000);
 
 console.log("Server now listening on http://localhost:3000/");
+
