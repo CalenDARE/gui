@@ -114,9 +114,61 @@ function appendMatches(data) {
         addToFavoritesButton.style.height = '60px';
         addToFavoritesButton.style.width = '60px';
         addToFavoritesButton.style.marginTop = '22px'
+        addToFavoritesButton.setAttribute("data-match-id", match.eventID);
+
+        addToFavoritesButton.addEventListener("click", function(event) {
+            const matchId = event.target.getAttribute("data-match-id");
+            addMatchToFavorites(matchId);
+        });
+
         tableRow.appendChild(addToFavoritesButton);
         matches.appendChild(tableRow);
     }
   
     bodyElement.appendChild(matches);
+}
+function addMatchToFavorites(eventId, matchId) {
+    
+    // Hole die favorisierten Matches des Events aus dem Cookie (falls vorhanden)
+    const favorites = getFavoritesFromCookie(eventId);
+
+    // Füge die ID des Matches zu den favorisierten Matches hinzu, wenn sie noch nicht enthalten ist
+    if (!favorites.includes(matchId)) {
+        favorites.push(matchId);
+    }
+
+    // Speichere die aktualisierten favorisierten Matches des Events im Cookie
+    setFavoritesCookie(eventId, favorites);
+
+    // Weitere Aktionen nach dem Hinzufügen zum Favoriten können hier ausgeführt werden
+}
+
+function getFavoritesFromCookie(eventId) {
+    const favoritesCookie = getCookie(`favorites_${eventId}`);
+    if (favoritesCookie) {
+        return JSON.parse(favoritesCookie);
+    }
+    return [];
+}
+
+function setFavoritesCookie(eventId, favorites) {
+    const favoritesCookie = JSON.stringify(favorites);
+    setCookie(`favorites_${eventId}`, favoritesCookie);
+}
+
+function getCookie(name) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split("; ");
+    for (const cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.split("=");
+        if (cookieName === name) {
+            return decodeURIComponent(cookieValue);
+        }
+    }
+    return null;
+}
+
+function setCookie(name, value) {
+    const cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+    document.cookie = cookieString;
 }
