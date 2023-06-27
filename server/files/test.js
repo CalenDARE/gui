@@ -115,10 +115,10 @@ function appendMatches(data) {
         addToFavoritesButton.style.width = '60px';
         addToFavoritesButton.style.marginTop = '22px'
         addToFavoritesButton.setAttribute("data-match-id", match.eventID);
+        addToFavoritesButton.id = "favoriteButton" + match.eventID
 
         addToFavoritesButton.addEventListener("click", function(event) {
-            const matchId = event.target.getAttribute("data-match-id");
-            addMatchToFavorites(matchId);
+            addEvent(match);
         });
 
         tableRow.appendChild(addToFavoritesButton);
@@ -127,6 +127,25 @@ function appendMatches(data) {
   
     bodyElement.appendChild(matches);
 }
+
+function addEvent(source) {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        if (xhr.status == 200) {
+            const data = JSON.parse(xhr.responseText);
+            console.log(data)
+            const favoriteButton = document.getElementById("favoriteButton" + data.eventId)
+            favoriteButton.style.color = "green"
+        } else {
+        console.log('Request failed. Status:', xhr.status);
+        }
+    };
+    
+    xhr.open('POST', "/addEvent");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(source));
+}
+
 function addMatchToFavorites(eventId, matchId) {
     
     // Hole die favorisierten Matches des Events aus dem Cookie (falls vorhanden)

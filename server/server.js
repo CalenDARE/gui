@@ -140,6 +140,14 @@ function transformAPIData(data) {
   };
 }
 
+function transformEvent(data) {
+  return {
+    eventId: data.eventID,
+    eventDate: new Date(data.date).toISOString(),
+    eventName: data.teams.home.name + " VS " + data.teams.away.name
+  };
+}
+
 
 app.get('/LEC', function (req, res) {
   callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4197', res)
@@ -194,6 +202,73 @@ function callScheduleApi(url, res)
     console.log('Error:', err.message);
     res.status(500).send('Error fetching data');
 })};
+
+app.post("/addEvent", (req, res) => {
+  const postData = JSON.stringify(transformEvent(req.body));
+   const options = {
+    hostname: 'localhost',
+    port: 8081,
+    path: '/storage-service/addEvent',
+     method: 'POST',
+     headers: {
+       'Content-Type': 'application/json',
+       'Content-Length': Buffer.byteLength(postData)
+     }
+   };
+
+   const request = http.request(options, (response) => {
+     console.log(`STATUS: ${response.statusCode}`);
+     console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+     response.setEncoding('utf8');
+     let data = '';
+     response.on('data', (chunk) => {
+      data += chunk;
+     });
+     response.on('end', () => {
+       console.log(data)
+        res.send(data);
+     });
+   });
+  
+   request.on('error', (e) => {
+     console.error(`problem with request: ${e.message}`);
+   });
+  
+   // Write data to request body
+   request.write(postData);
+   request.end();
+});
+
+app.delete("/deleteEvent", (req, res) => {
+  const postData = JSON.stringify(transformEvent(req.body));
+  http.delete("http://localhost:8081/storage-service/deleteEventById/" + postData.id, (resp) => {
+    let data = '';
+
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    resp.on('end', () => {
+      try {
+        const jsonData = JSON.parse(data);
+        let transformedData = [];
+
+        if (jsonData.response && Array.isArray(jsonData.response)) {
+          transformedData = jsonData.response.map(transformAPIData);
+        }
+
+        res.send(transformedData);
+      } catch (error) {
+        console.log('Error parsing JSON:', error);
+        res.status(500).send('Error parsing JSON');
+      }
+    });
+  }).on('error', (err) => {
+    console.log('Error:', err.message);
+    res.status(500).send('Error fetching data');
+})});
+
+
 
 app.listen(3000);
 
