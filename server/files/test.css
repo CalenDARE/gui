@@ -291,10 +291,10 @@ header .header-1{
             color: white;
             align-items: center;
             justify-content: space-between;
-            margin-right: 620px;
+            margin-right: 550px;
         }
         .header-1 .navbar-search{
-            margin-right: 330px;
+            margin-right: 230px;
         }
     .header-1 .header-menu-tab {
 
@@ -383,11 +383,14 @@ header .header-2{
 	border-radius: 5px;
 }
 .header-2 .header-menu-tab {
+  padding: 0 15px; /* Adjust the padding as needed */
+  display: inline-block; /* Display the tabs inline */
+  line-height: 30px; /* Adjust the line-height as needed */
+  font-size: 15px; /* Adjust the font-size as needed */
+}
 
-  padding: 0 27px;
-  display: block;
-  line-height: 74px;
-  font-size: 17px;
+.header-2 .header-menu-tab .icon {
+  padding-right: 5px; /* Adjust the padding as needed */
 }
 
 
@@ -474,7 +477,7 @@ header .header-2{
 td {
   height: 110px;
   vertical-align: center;
-  padding: 50px;
+  padding: 10px;
   font-size: 30px;
   color: #fff;
 }
