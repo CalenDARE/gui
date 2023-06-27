@@ -1,8 +1,8 @@
 function addLeagues(sport) {
-    if (sport == "football") {
-        appendHeader("Premier League", "Bundesliga", "La Liga")
-    } else if (sport == "basketball") {
-        appendHeader("NBA", "EuroLeague")
+    if (sport == "dota") {
+        appendHeader("dotaleague1", "dotaleague2", "dotaleague3")
+    } else if (sport == "valorant") {
+        appendHeader("valorant1", "valorant2")
     } else if (sport == "lol") {
         appendHeader("LEC", "LCS", "LCK")
     }

@@ -12,7 +12,6 @@ while (currentDate <= endDate) {
 
   // Generate a random event description
   var eventDescription = generateRandomEvent();
-  var eventImage = getRandomImageURL();
 
   // Add the event for the current date
   if (!eventDates[dateStr]) {
@@ -28,7 +27,6 @@ while (currentDate <= endDate) {
   currentDate.setDate(currentDate.getDate() + 1);
 }
 
-// Rest of the code...
 
 function generateRandomEvent() {
   var events = [
@@ -206,40 +204,6 @@ function formatDate(date) {
   return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
 }
 
-const sampleData = {
-  "event": {
-    "id": 979987,
-    "date": "2023-06-26T16:00:00",
-    "venue": {
-      "id": 5153,
-      "name": "Ullern kunstgress",
-      "city": "Oslo"
-    }
-  },
-  "league": {
-    "id": 474,
-    "name": "2. Division - Group 2",
-    "country": "Norway",
-    "logo": "https://media-2.api-sports.io/football/leagues/474.png",
-    "flag": "https://media-3.api-sports.io/flags/no.svg",
-    "season": 2023
-  },
-  "teams": {
-    "home": {
-      "id": 7042,
-      "name": "Ullern",
-      "logo": "https://media-3.api-sports.io/football/teams/7042.png"
-    },
-    "away": {
-      "id": 12865,
-      "name": "Strømsgodset II",
-      "logo": "https://media-3.api-sports.io/football/teams/12865.png"
-    }
-  }
-};
-
-
-
 window.onload = function() {
   const xhr = new XMLHttpRequest();
   xhr.onload = function() {
@@ -248,17 +212,16 @@ window.onload = function() {
 
       for (const football of data) {
         console.log(football);
-     
-     
       }
     } else {
       console.log('Request failed. Status:', xhr.status);
     }
   };
 
-  xhr.open('GET', '/lol');
+  xhr.open('GET', '/lec');
   xhr.send();
 };
+
 
 
 
