@@ -1,207 +1,158 @@
+let nav = 0;
+let clicked = null;
+let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
 
-var eventDates = {};
-var eventImg = {};
-var startDate = new Date(); // Start date
-var endDate = new Date(); // End date
-endDate.setDate(endDate.getDate() + 365); // Set the end date to one year from the start date
+const calendar = document.getElementById('calendar');
+const newEventModal = document.getElementById('newEventModal');
+const deleteEventModal = document.getElementById('deleteEventModal');
+const backDrop = document.getElementById('modalBackDrop');
+const eventTitleInput = document.getElementById('eventTitleInput');
+const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-var currentDate = new Date(startDate); // Initialize current date as start date
+function openModal(date) {
+  clicked = date;
 
-while (currentDate <= endDate) {
-  var dateStr = formatDate(currentDate); // Format the current date as a string
+  const eventForDay = events.find(e => e.date === clicked);
 
-  // Generate a random event description
-  var eventDescription = generateRandomEvent();
-
-  // Add the event for the current date
-  if (!eventDates[dateStr]) {
-    eventDates[dateStr] = [];
+  if (eventForDay) {
+    document.getElementById('eventText').innerText = eventForDay.title;
+    deleteEventModal.style.display = 'block';
+  } else {
+    newEventModal.style.display = 'block';
   }
-  var randomIndex = Math.floor(Math.random() * eventDates[dateStr].length);
+
+  backDrop.style.display = 'block';
+}
+
+function load() {
+  const dt = new Date();
+
+  if (nav !== 0) {
+    dt.setMonth(new Date().getMonth() + nav);
+  }
+
+  const day = dt.getDate();
+  const month = dt.getMonth();
+  const year = dt.getFullYear();
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
   
-  eventDates[dateStr].splice(randomIndex, 0, eventDescription);
-  eventDates[dateStr].splice(randomIndex, 0, eventDescription);
-  eventDates[dateStr].splice(randomIndex, 0, eventDescription);
+  const dateString = firstDayOfMonth.toLocaleDateString('en-us', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+  const paddingDays = weekdays.indexOf(dateString.split(', ')[0]);
 
-  // Move to the next day
-  currentDate.setDate(currentDate.getDate() + 1);
-}
+  document.getElementById('monthDisplay').innerText = 
+    `${dt.toLocaleDateString('en-us', { month: 'long' })} ${year}`;
 
+  calendar.innerHTML = '';
 
-function generateRandomEvent() {
-  var events = [
-    'Event 1, Location 1',
-    'Event 2, Location 2',
-    'Event 3, Location 3',
-    'Event 4, Location 4',
-    'Event 5, Location 7',
-    'Event 2, Location 4',
-    'Event 6, Location 0',
-    'Event 1, Location 8',
+  for(let i = 1; i <= paddingDays + daysInMonth; i++) {
+    const daySquare = document.createElement('div');
+    daySquare.classList.add('day');
 
-    // Add more event descriptions here
-  ];
+    const dayString = `${month + 1}/${i - paddingDays}/${year}`;
 
-  // Generate a random index
-  var randomIndex = Math.floor(Math.random() * events.length);
-  return events[randomIndex];
-}
+    if (i > paddingDays) {
+      daySquare.innerText = i - paddingDays;
+      const eventForDay = events.find(e => e.date === dayString);
 
-// Event click handler
-function handleEventClick(event) {
-  const eventDate = event.target.dataset.date;
-  const eventDescriptions = eventDates[eventDate];
-  const eventImages = eventImg[eventDate];
-  // Clear previous event details
-  eventDetailsContainer.innerHTML = '';
-
-  // Create event details elements
-  for (let i = 0; i < eventDescriptions.length; i++) {
-    const eventDescription = eventDescriptions[i];
-    const eventImage1 = eventImages[i];
-
-    const eventTitle = document.createElement('h3');
-    eventTitle.textContent = 'Event ' + (i + 1);
-
-    const eventLocation = document.createElement('p');
-    eventLocation.textContent = 'Location: ' + eventDescription;
-
-    const eventImage = document.createElement('img');
-    eventImage.src = eventImage1; // Function to get a random image URL
-
-    // Append elements to event details container
-    const eventContainer = document.createElement('div');
-    eventContainer.classList.add('event-container');
-    eventContainer.appendChild(eventTitle);
-    eventContainer.appendChild(eventLocation);
-    eventContainer.appendChild(eventImage);
-    eventDetailsContainer.appendChild(eventContainer);
-  }
-
-  // Show event details container
-  eventDetailsContainer.style.display = 'block';
-}
-document.getElementById('calendar').addEventListener('click', function(event) {
-  // Check if the clicked element has the 'event' class
-  if (event.target.classList.contains('event')) {
-    handleEventClick(event);
-  }
-});
-
-
-function getRandomImageURL() {
-  const images = [
-    './match1.png',
-    './match2.png',
-    './match1.png'
-  ];
-
-  const randomIndex = Math.floor(Math.random() * images.length);
-  return images[randomIndex];
-}
-
-var flatpickr = $('#calendar .placeholder').flatpickr({
-  inline: true,
-  minDate: 'today',
-  maxDate: '2024-01-01', // Replace with your desired maximum date
-  showMonths: 1,
-  enable: Object.keys(eventDates),
-  disableMobile: true,
-  onDayCreate: function (dObj, dStr, fp, dayElem) {
-    if (eventDates[dStr]) {
-      dayElem.innerHTML += '<span class="event-mark"></span>';
-    }
-  },
-  onChange: function (selectedDates, dateStr, instance) {
-    var contents = '';
-    if (eventDates[dateStr]) {
-      for (var i = 0; i < eventDates[dateStr].length; i++) {
-        contents += '<div class="event"><div class="date">' + dateStr + '</div><div class="location">' + eventDates[dateStr][i] + '</div></div>';
+      if (i - paddingDays === day && nav === 0) {
+        daySquare.id = 'currentDay';
       }
+
+      if (eventForDay) {
+        const eventDiv = document.createElement('div');
+        eventDiv.classList.add('event');
+        eventDiv.innerText = eventForDay.title;
+        daySquare.appendChild(eventDiv);
+      }
+
+      daySquare.addEventListener('click', () => displayEventsForDay(dayString));
+    } else {
+      daySquare.classList.add('padding');
     }
-    $('#calendar .calendar-events').html(contents);
-  },
-  locale: {
-    weekdays: {
-      shorthand: ["S", "M", "T", "W", "T", "F", "S"],
-      longhand: [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ]
-    }
+
+    calendar.appendChild(daySquare);    
   }
-});
+}
 
-// Event handler for displaying event details when clicked
-$('#calendar .calendar-events').on('click', '.event', function () {
-  var eventText = $(this).find('.location').text();
-  var eventImage = getRandomImageURL();
+function displayEventsForDay(dayString) {
+  const eventsForDay = eventsResponse.filter(event => {
+    const eventDate = new Date(event.eventDate).toLocaleDateString();
+    return eventDate === dayString;
+  });
 
-  // Clear previous event details
-  $('#event-details').empty();
+  if (eventsForDay.length > 0) {
 
-  // Create a container div for the event details
-  var eventDetailsContainer = $('<div>').addClass('event-details-container');
 
-  // Create and append the event text element
-  var eventTextElement = $('<div>')
-    .addClass('event-text')
-    .text(eventText);
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      if (xhr.status == 200) {
+        const data = JSON.parse(xhr.responseText);
+        console.log(xhr.responseText);
+        // Handle the received data as per your requirements
+      } else {
+        console.log('Request failed. Status:', xhr.status);
+      }
+    };
+  
+    xhr.open('GET', '/getAllEvents');
+    xhr.send();
+  }
+}
 
-  // Create and append the event image element with max width and height
-  var eventImageElement = $('<img>')
-    .addClass('event-image')
-    .attr('src', eventImage)
-    .css({
-      'max-width': '500px', // Set the desired maximum width
-      'max-height': '800px', // Set the desired maximum height
-      'margin-top': '500px',
+function closeModal() {
+  eventTitleInput.classList.remove('error');
+  newEventModal.style.display = 'none';
+  deleteEventModal.style.display = 'none';
+  backDrop.style.display = 'none';
+  eventTitleInput.value = '';
+  clicked = null;
+  load();
+}
+
+function saveEvent() {
+  if (eventTitleInput.value) {
+    eventTitleInput.classList.remove('error');
+
+    events.push({
+      date: clicked,
+      title: eventTitleInput.value,
     });
 
-  //eventDetailsContainer.append(eventTextElement);
-  eventDetailsContainer.append(eventImageElement);
-
-  // Append the event details container to the event-details element
-  $('#event-details').append(eventDetailsContainer);
-});
-
-
-
-eventCalendarResize($(window));
-$(window).on('resize', function() { 
-  eventCalendarResize($(this))
-})
-
-function eventCalendarResize($el) {
-  var width = $el.width()
-  if (flatpickr.selectedDates.length) {
-    flatpickr.clear()
-  }
-  if (width >= 992 && flatpickr.config.showMonths !== 3) {
-    flatpickr.set('showMonths', 3)
-    flatpickr.set('maxDate', '2024-01-01') // Replace with your desired maximum date
-  }
-  if (width < 992 && width >= 768 && flatpickr.config.showMonths !== 2) {
-    flatpickr.set('showMonths', 2)
-    flatpickr.set('maxDate', '2024-01-01') // Replace with your desired maximum date
-  }
-  if (width < 768 && flatpickr.config.showMonths !== 1) {
-    flatpickr.set('showMonths', 1)
-    flatpickr.set('maxDate', '2024-01-01') // Replace with your desired maximum date
-    $('.flatpickr-calendar').css('width', '')
+    localStorage.setItem('events', JSON.stringify(events));
+    closeModal();
+  } else {
+    eventTitleInput.classList.add('error');
   }
 }
 
-function formatDate(date) {
-  let d = date.getDate();
-  let m = date.getMonth() + 1; //Month from 0 to 11
-  let y = date.getFullYear();
-  return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
+function deleteEvent() {
+  events = events.filter(e => e.date !== clicked);
+  localStorage.setItem('events', JSON.stringify(events));
+  closeModal();
+}
+
+function initButtons() {
+  document.getElementById('nextButton').addEventListener('click', () => {
+    nav++;
+    load();
+  });
+
+  document.getElementById('backButton').addEventListener('click', () => {
+    nav--;
+    load();
+  });
+
+  document.getElementById('saveButton').addEventListener('click', saveEvent);
+  document.getElementById('cancelButton').addEventListener('click', closeModal);
+  document.getElementById('deleteButton').addEventListener('click', deleteEvent);
+  document.getElementById('closeButton').addEventListener('click', closeModal);
 }
 
 window.onload = function() {
@@ -209,21 +160,18 @@ window.onload = function() {
   xhr.onload = function() {
     if (xhr.status == 200) {
       const data = JSON.parse(xhr.responseText);
-
-      for (const football of data) {
-        console.log(football);
-      }
+      console.log(xhr.responseText);
+      // Handle the received data as per your requirements
     } else {
       console.log('Request failed. Status:', xhr.status);
     }
   };
 
-  xhr.open('GET', '/lec');
+  xhr.open('GET', '/getAllEvents');
   xhr.send();
 };
 
-
-
-
+initButtons();
+load();
 
 
