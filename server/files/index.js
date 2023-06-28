@@ -34,4 +34,37 @@ let mainF = (e) => {
         switchBtn[i].addEventListener("click", changeForm)
 }
 
+
+
+function Auth() { //bmw m4 coupé
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+  
+    const data = {
+        email: email,
+      password: password
+    };
+    console.log(email);
+    console.log(password);
+
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+      if (xhr.status == 200) {
+        const response = JSON.parse(xhr.responseText);
+        console.log("test")
+        
+        console.log(response);
+      } else {
+        console.log('Request failed. Status:', xhr.status);
+      }
+    };
+  
+    xhr.open('POST', '/auth');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(data));
+  }
+  
+  
+
+
 window.addEventListener("load", mainF);

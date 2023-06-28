@@ -121,6 +121,12 @@ app.get('/getEventsForUser/:id', function (req, res) {
   callEventsApi("http://localhost:8081/storage-service/getAllEventsForUser/" + req.params.id, res);
 });
 
+//app.put('/storage-service/updateUser/{email},')
+
+app.put('/storage-service/updateUser/:email', function (req, res) {
+  callEventsApi("http://localhost:8081/storage-service/updateUser/" + req.params.email, res);
+});
+
 function callEventsApi(url, res) {
   http.get(url, (resp) => {
     let data = '';
@@ -211,6 +217,88 @@ app.post("/addEvent", (req, res) => {
    request.write(postData);
    request.end();
 });
+
+app.post("/auth", (req, res) => {
+  console.log("test: " + req.body)
+  const { email, password } = req.body;
+  const postData = JSON.stringify({ email, password });
+
+  console.log(email)
+  console.log(password)
+
+  const options = {
+    hostname: 'localhost',
+    port: 8081,
+    path: '/storage-service/auth/authenticate',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData)
+    }
+  };
+
+  const request = http.request(options, (response) => {
+    console.log(`STATUS: ${response.statusCode}`);
+    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+    response.setEncoding('utf8');
+    let data = '';
+    response.on('data', (chunk) => {
+      data += chunk;
+    });
+    response.on('end', () => {
+      res.send(data);
+    });
+  });
+
+  request.on('error', (e) => {
+    console.error(`problem with request: ${e.message}`);
+  });
+
+  request.write(postData);
+  request.end();
+});
+
+
+app.post("/register", (req, res) => {
+  const { firstname, lastname, email, password} = req.body;
+  const postData = JSON.stringify({ firstname, lastname, email, password });
+  console.log(postData)
+
+  const options = {
+    hostname: 'localhost',
+    port: 8081,
+    path: '/storage-service/auth/register',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData)
+    }
+  };
+
+  const request = http.request(options, (response) => {
+    console.log(`STATUS: ${response.statusCode}`);
+    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+    response.setEncoding('utf8');
+    let data = '';
+    response.on('data', (chunk) => {
+      console.log('hiers')
+      data += chunk;
+    });
+    response.on('end', () => {
+      console.log("dast ist die data" + data)
+      res.send(data);
+    });
+  });
+
+  request.on('error', (e) => {
+    console.error(`problem with request: ${e.message}`);
+  });
+
+  request.write(postData);
+  request.end();
+});
+
+
 
 app.delete("/deleteEvent/:id", (req, res) => {
   const postData = req.params.id;

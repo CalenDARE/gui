@@ -179,18 +179,14 @@ function addEvent(source, event) {
 
 function addMatchToFavorites(eventId, matchId) {
     
-    // Hole die favorisierten Matches des Events aus dem Cookie (falls vorhanden)
     const favorites = getFavoritesFromCookie(eventId);
 
-    // Füge die ID des Matches zu den favorisierten Matches hinzu, wenn sie noch nicht enthalten ist
     if (!favorites.includes(matchId)) {
         favorites.push(matchId);
     }
 
-    // Speichere die aktualisierten favorisierten Matches des Events im Cookie
     setFavoritesCookie(eventId, favorites);
 
-    // Weitere Aktionen nach dem Hinzufügen zum Favoriten können hier ausgeführt werden
 }
 
 function getFavoritesFromCookie(eventId) {
