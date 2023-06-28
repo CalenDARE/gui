@@ -21,7 +21,8 @@ function Register() {
     xhr.onload = function() {
       if (xhr.status == 200) {
         const response = JSON.parse(xhr.responseText);
-        console.log(response.message);
+        alert("Successful")
+        location.href = "index.html";
       } else {
         console.log('Request failed. Status:', xhr.status);
       }

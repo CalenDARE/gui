@@ -34,26 +34,26 @@ let mainF = (e) => {
         switchBtn[i].addEventListener("click", changeForm)
 }
 
+//bmw m4 coupé
 
-
-function Auth() { //bmw m4 coupé
+function Auth() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
   
     const data = {
-        email: email,
+      email: email,
       password: password
     };
     console.log(email);
     console.log(password);
-
+  
     const xhr = new XMLHttpRequest();
     xhr.onload = function() {
       if (xhr.status == 200) {
         const response = JSON.parse(xhr.responseText);
-        console.log("test")
-        
-        console.log(response);
+        // Hier kannst du die Antwort vom Server verarbeiten
+        // Redirect zur homepage.html durchführen
+        window.location.href = "homepage.html";
       } else {
         console.log('Request failed. Status:', xhr.status);
       }
@@ -64,7 +64,5 @@ function Auth() { //bmw m4 coupé
     xhr.send(JSON.stringify(data));
   }
   
-  
-
 
 window.addEventListener("load", mainF);
