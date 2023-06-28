@@ -91,7 +91,6 @@ function getEventsForUser() {
   xhr.onload = function() {
     if (xhr.status == 200) {
       const data = JSON.parse(xhr.responseText);
-      console.log(data)
       for (match of data) {
         let month = new Date().getMonth() + 1
         if (nav !== 0) {
@@ -101,7 +100,7 @@ function getEventsForUser() {
           const matchDay = document.getElementById(new Date(match.eventDate).getDay() + 1)
           if (matchDay) {
             matchDay.id = 'matchDay'
-            matchDay.textContent += match.eventName
+            matchDay.textContent += "  " + match.eventName
           }
         }
       }

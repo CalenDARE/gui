@@ -73,9 +73,9 @@ function transformServerToApiData(data) {
 function transformEvent(data, id) {
   let date  = new Date()
   date.setMonth(data.date.substring(3,5) - 1)
-  date.setDate(data.date.substring(0,2))
   date.setFullYear(data.date.substring(6,10))
-  date.setHours(data.date.substring(12,14) + 2)
+  date.setDate(data.date.substring(0,2))
+  date.setHours(data.date.substring(12,14))
   date.setMinutes(data.date.substring(15,17))
   const user = {
     id: id
@@ -133,7 +133,6 @@ function callEventsApi(url, res) {
 
     resp.on('end', () => {
       try {
-        console.log(data)
         const jsonData = JSON.parse(data);
         let transformedData = [];
         transformedData = jsonData.map(transformServerToApiData);
@@ -182,6 +181,7 @@ function callScheduleApi(url, res)
 
 app.post("/addEvent/:id", (req, res) => {
   const postData = JSON.stringify(transformEvent(req.body, req.params.id));
+  console.log(postData)
    const options = {
     hostname: 'localhost',
     port: 8081,
@@ -250,7 +250,6 @@ app.get("/auth/:email", (req, res) => {
 app.post("/register", (req, res) => {
   const { firstname, lastname, email, password} = req.body;
   const postData = JSON.stringify({ firstname, lastname, email, password });
-  console.log(postData)
 
   const options = {
     hostname: 'localhost',
@@ -269,11 +268,9 @@ app.post("/register", (req, res) => {
     response.setEncoding('utf8');
     let data = '';
     response.on('data', (chunk) => {
-      console.log('hiers')
       data += chunk;
     });
     response.on('end', () => {
-      console.log("dast ist die data" + data)
       res.send(data);
     });
   });
@@ -298,7 +295,6 @@ function transformUser(data) {
 app.put('/updateUser', function (req, res) {
   const body = transformUser(req.body)
   const putData = JSON.stringify(body);
-  console.log(putData)
 
   const options = {
     hostname: 'localhost',
@@ -317,11 +313,9 @@ app.put('/updateUser', function (req, res) {
     response.setEncoding('utf8');
     let data = '';
     response.on('data', (chunk) => {
-      console.log('hiers')
       data += chunk;
     });
     response.on('end', () => {
-      console.log("dast ist die data" + data)
       res.send(data);
     });
   });

@@ -33,8 +33,6 @@ window.onload = function() {
   const lastname = document.getElementById("lastname")
   const email = document.getElementById("email")
   
-  console.log(data)
-  console.log(data.firstName)
   firstname.value = data.firstName
   lastname.value = data.lastName
   email.value = data.email

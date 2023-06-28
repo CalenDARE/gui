@@ -44,8 +44,6 @@ function Auth() {
       email: email,
       password: password
     };
-    console.log(email);
-    console.log(password);
   
     const xhr = new XMLHttpRequest();
     xhr.onload = function() {

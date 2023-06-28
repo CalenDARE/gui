@@ -57,8 +57,10 @@ function getData(source) {
                 if (xhr2.status == 200) {
                     const data = JSON.parse(xhr2.responseText);
                     for (match of data) {
-                        const favButton = document.getElementById(match.eventId)
-                        favButton.style.color = "green"
+                        if (document.contains(document.getElementById(match.eventId))) {
+                            const favButton = document.getElementById(match.eventId)
+                            favButton.style.color = "green"
+                        }
                     }
                 } else {
                     console.log('Request failed. Status:', xhr2.status);
