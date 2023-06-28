@@ -127,3 +127,7 @@ button {
 .eventDay {
   background-color: lightblue;
 }
+
+.day + #matchDay{
+  background-color: green;
+}

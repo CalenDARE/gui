@@ -3,6 +3,7 @@ let clicked = null;
 let events = localStorage.getItem('events') ? JSON.parse(localStorage.getItem('events')) : [];
 
 const calendar = document.getElementById('calendar');
+const eventList = document.getElementById('eventList');
 const newEventModal = document.getElementById('newEventModal');
 const deleteEventModal = document.getElementById('deleteEventModal');
 const backDrop = document.getElementById('modalBackDrop');
@@ -59,6 +60,7 @@ function load() {
 
     if (i > paddingDays) {
       daySquare.innerText = i - paddingDays;
+      daySquare.id = i - paddingDays;
       const eventForDay = events.find(e => e.date === dayString);
 
       if (i - paddingDays === day && nav === 0) {
@@ -77,33 +79,54 @@ function load() {
       daySquare.classList.add('padding');
     }
 
+
     calendar.appendChild(daySquare);    
   }
+
+  getEventsForUser()
+}
+
+function getEventsForUser() {
+  const xhr = new XMLHttpRequest();
+  xhr.onload = function() {
+    if (xhr.status == 200) {
+      const data = JSON.parse(xhr.responseText);
+      console.log(data)
+      for (match of data) {
+        let month = new Date().getMonth() + 1
+        if (nav !== 0) {
+          month = month + nav;
+        }
+        if ((new Date(match.eventDate).getMonth() + 1) === month) {
+          const matchDay = document.getElementById(new Date(match.eventDate).getDay() + 1)
+          if (matchDay) {
+            matchDay.id = 'matchDay'
+            matchDay.textContent += match.eventName
+          }
+        }
+      }
+    } else {
+      console.log('Request failed. Status:', xhr.status);
+    }
+  };
+
+  xhr.open('GET', '/getEventsForUser/1');
+  xhr.send();
 }
 
 function displayEventsForDay(dayString) {
-  const eventsForDay = eventsResponse.filter(event => {
-    const eventDate = new Date(event.eventDate).toLocaleDateString();
-    return eventDate === dayString;
-  });
-
-  if (eventsForDay.length > 0) {
-
-
     const xhr = new XMLHttpRequest();
     xhr.onload = function() {
       if (xhr.status == 200) {
         const data = JSON.parse(xhr.responseText);
-        console.log(xhr.responseText);
         // Handle the received data as per your requirements
       } else {
         console.log('Request failed. Status:', xhr.status);
       }
     };
   
-    xhr.open('GET', '/getAllEvents');
+    xhr.open('GET', '/getEventsForUser/1');
     xhr.send();
-  }
 }
 
 function closeModal() {
@@ -160,7 +183,6 @@ window.onload = function() {
   xhr.onload = function() {
     if (xhr.status == 200) {
       const data = JSON.parse(xhr.responseText);
-      console.log(xhr.responseText);
       // Handle the received data as per your requirements
     } else {
       console.log('Request failed. Status:', xhr.status);

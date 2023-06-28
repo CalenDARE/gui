@@ -14,90 +14,6 @@ app.use(bodyParser.json());
 // Serve static content in directory 'files'
 app.use(express.static(path.join(__dirname, "files")));
 
-// app.get("/movies", function (req, res) {
-//   let movies = Object.values(movieModel);
-//   const queriedGenre = req.query.genre;
-//   if (queriedGenre) {
-//     movies = movies.filter((movie) => movie.Genres.indexOf(queriedGenre) >= 0);
-//   }
-//   res.send(movies);
-// });
-
-app.get('/football', function (req, res) {
-  const testdata = {
-    "response": [{
-      "event": {
-        "id": 979987,
-        "date": "2023-06-26T16:00:00",
-        "venue": {
-          "id": 5153,
-          "name": "Ullern kunstgress",
-          "city": "Oslo"
-        }
-      },
-      "league": {
-        "id": 474,
-        "name": "2. Division - Group 2",
-        "country": "Norway",
-        "logo": "https://media-2.api-sports.io/football/leagues/474.png",
-        "flag": "https://media-3.api-sports.io/flags/no.svg",
-        "season": 2023
-      },
-      "teams": {
-        "home": {
-          "id": 7042,
-          "name": "Ullern",
-          "logo": "https://media-3.api-sports.io/football/teams/7042.png"
-        },
-        "away": {
-          "id": 12865,
-          "name": "Strømsgodset II",
-          "logo": "https://media-3.api-sports.io/football/teams/12865.png"
-        }
-      }
-    }, {
-      "event": {
-        "id": 1011662,
-        "date": "2023-06-26T16:00:00",
-        "venue": {
-          "id": 11538,
-          "name": "SM Tauras Stadionas",
-          "city": "Kaunas"
-        }
-      },
-      "league": {
-        "id": 361,
-        "name": "1 Lyga",
-        "country": "Lithuania",
-        "logo": "https://media-3.api-sports.io/football/leagues/361.png",
-        "flag": "https://media-3.api-sports.io/flags/lt.svg",
-        "season": 2023
-      },
-      "teams": {
-        "home": {
-          "id": 13971,
-          "name": "Kauno Žalgiris II",
-          "logo": "https://media-3.api-sports.io/football/teams/13971.png"
-        },
-        "away": {
-          "id": 3871,
-          "name": "Žalgiris II",
-          "logo": "https://media-1.api-sports.io/football/teams/3871.png"
-        }
-      }
-    }]
-  };
-
-  const allFootball = [];
-  for (const data of testdata.response) {
-    const transformedData = transformAPIData(data);
-    allFootball.push(transformedData);
-  }
-
-  console.log(allFootball);
-
-  res.send(allFootball);
-});
 
 function transformAPIData(data) {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -154,11 +70,20 @@ function transformServerToApiData(data) {
   };
 }
 
-
 function transformEvent(data) {
+  let date  = new Date()
+  date.setMonth(data.date.substring(3,5) - 1)
+  date.setDate(data.date.substring(0,2))
+  date.setFullYear(data.date.substring(6,10))
+  date.setHours(data.date.substring(12,14) + 2)
+  date.setMinutes(data.date.substring(15,17))
+  const user = {
+    id: 1
+  }
   return {
+    user: user,
     eventId: data.eventID,
-    eventDate: new Date(data.date).toISOString(),
+    eventDate: date,
     eventName: data.teams.home.name + " VS " + data.teams.away.name
   };
 }

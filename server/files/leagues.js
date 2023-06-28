@@ -56,12 +56,8 @@ function getData(source) {
             xhr2.onload = function() {
                 if (xhr2.status == 200) {
                     const data = JSON.parse(xhr2.responseText);
-                    console.log(data)
                     for (match of data) {
-                        console.log(match)
-                        console.log(match.eventId)
                         const favButton = document.getElementById(match.eventId)
-                        console.log(favButton)
                         favButton.style.color = "green"
                     }
                 } else {
@@ -175,6 +171,8 @@ function addEvent(source, event) {
         
         xhr.open('POST', "/addEvent");
         xhr.setRequestHeader("Content-Type", "application/json");
+        console.log(JSON.stringify(source))
+        console.log("asdkajaklajl")
         xhr.send(JSON.stringify(source));
     }
 }
