@@ -65,7 +65,7 @@ function getData(source) {
                 }
             };
             
-            xhr2.open('GET', "/getEventsForUser/1");
+            xhr2.open('GET', "/getEventsForUser/" + sessionStorage.getItem("user"));
             xhr2.send(); 
         } else {
         console.log('Request failed. Status:', xhr.status);
@@ -169,10 +169,8 @@ function addEvent(source, event) {
             }
         };
         
-        xhr.open('POST', "/addEvent");
+        xhr.open('POST', "/addEvent/" + sessionStorage.getItem("user"));
         xhr.setRequestHeader("Content-Type", "application/json");
-        console.log(JSON.stringify(source))
-        console.log("asdkajaklajl")
         xhr.send(JSON.stringify(source));
     }
 }

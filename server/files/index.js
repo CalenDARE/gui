@@ -51,17 +51,16 @@ function Auth() {
     xhr.onload = function() {
       if (xhr.status == 200) {
         const response = JSON.parse(xhr.responseText);
-        // Hier kannst du die Antwort vom Server verarbeiten
-        // Redirect zur homepage.html durchführen
+        sessionStorage.setItem("user", response.id)
+        sessionStorage.setItem("userFull", JSON.stringify(response))
         window.location.href = "homepage.html";
       } else {
         console.log('Request failed. Status:', xhr.status);
       }
     };
   
-    xhr.open('POST', '/auth');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify(data));
+    xhr.open('GET', '/auth/' + email);
+    xhr.send();
   }
   
 

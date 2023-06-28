@@ -110,7 +110,7 @@ function getEventsForUser() {
     }
   };
 
-  xhr.open('GET', '/getEventsForUser/1');
+  xhr.open('GET', '/getEventsForUser/' + sessionStorage.getItem("user"));
   xhr.send();
 }
 
@@ -125,7 +125,7 @@ function displayEventsForDay(dayString) {
       }
     };
   
-    xhr.open('GET', '/getEventsForUser/1');
+    xhr.open('GET', '/getEventsForUser/' + sessionStorage.getItem("user"));
     xhr.send();
 }
 

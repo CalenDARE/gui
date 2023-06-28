@@ -2,8 +2,8 @@ const express = require("express");
 const path = require("path");
 const http = require("http");
 const bodyParser = require("body-parser");
-const movieModel = require("./movie-model.js");
-const axios = require("axios")
+const axios = require("axios");
+const e = require("express");
 
 const app = express();
 
@@ -70,7 +70,7 @@ function transformServerToApiData(data) {
   };
 }
 
-function transformEvent(data) {
+function transformEvent(data, id) {
   let date  = new Date()
   date.setMonth(data.date.substring(3,5) - 1)
   date.setDate(data.date.substring(0,2))
@@ -78,7 +78,7 @@ function transformEvent(data) {
   date.setHours(data.date.substring(12,14) + 2)
   date.setMinutes(data.date.substring(15,17))
   const user = {
-    id: 1
+    id: id
   }
   return {
     user: user,
@@ -123,10 +123,6 @@ app.get('/getEventsForUser/:id', function (req, res) {
 
 //app.put('/storage-service/updateUser/{email},')
 
-app.put('/storage-service/updateUser/:email', function (req, res) {
-  callEventsApi("http://localhost:8081/storage-service/updateUser/" + req.params.email, res);
-});
-
 function callEventsApi(url, res) {
   http.get(url, (resp) => {
     let data = '';
@@ -137,6 +133,7 @@ function callEventsApi(url, res) {
 
     resp.on('end', () => {
       try {
+        console.log(data)
         const jsonData = JSON.parse(data);
         let transformedData = [];
         transformedData = jsonData.map(transformServerToApiData);
@@ -183,8 +180,8 @@ function callScheduleApi(url, res)
     res.status(500).send('Error fetching data');
 })};
 
-app.post("/addEvent", (req, res) => {
-  const postData = JSON.stringify(transformEvent(req.body));
+app.post("/addEvent/:id", (req, res) => {
+  const postData = JSON.stringify(transformEvent(req.body, req.params.id));
    const options = {
     hostname: 'localhost',
     port: 8081,
@@ -218,44 +215,35 @@ app.post("/addEvent", (req, res) => {
    request.end();
 });
 
-app.post("/auth", (req, res) => {
-  console.log("test: " + req.body)
-  const { email, password } = req.body;
-  const postData = JSON.stringify({ email, password });
-
-  console.log(email)
-  console.log(password)
-
-  const options = {
-    hostname: 'localhost',
-    port: 8081,
-    path: '/storage-service/auth/authenticate',
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(postData)
-    }
-  };
-
-  const request = http.request(options, (response) => {
-    console.log(`STATUS: ${response.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-    response.setEncoding('utf8');
+app.get("/auth/:email", (req, res) => {
+  http.get("http://localhost:8081/storage-service/getUser/" + req.params.email, (resp) => {
     let data = '';
-    response.on('data', (chunk) => {
+
+    resp.on('data', (chunk) => {
       data += chunk;
     });
-    response.on('end', () => {
-      res.send(data);
+
+    resp.on('end', () => {
+      try {
+        const jsonData = JSON.parse(data)
+        delete jsonData.tokens
+        delete jsonData.role
+        delete jsonData.accountNonLocked
+        delete jsonData.authorities
+        delete jsonData.accountNonExpired
+        delete jsonData.credentialsNonExpired
+        delete jsonData.enabled
+        delete jsonData.events
+        res.send(jsonData);
+      } catch (error) {
+        console.log('Error parsing JSON:', error);
+        res.status(500).send('Error parsing JSON');
+      }
     });
-  });
-
-  request.on('error', (e) => {
-    console.error(`problem with request: ${e.message}`);
-  });
-
-  request.write(postData);
-  request.end();
+  }).on('error', (err) => {
+    console.log('Error:', err.message);
+    res.status(500).send('Error fetching data');
+  })
 });
 
 
@@ -298,6 +286,53 @@ app.post("/register", (req, res) => {
   request.end();
 });
 
+function transformUser(data) {
+  return {
+    firstName: data.firstname,
+    lastName: data.lastname,
+    email: data.email,
+    password: data.password
+  };
+}
+
+app.put('/updateUser', function (req, res) {
+  const body = transformUser(req.body)
+  const putData = JSON.stringify(body);
+  console.log(putData)
+
+  const options = {
+    hostname: 'localhost',
+    port: 8081,
+    path: '/storage-service/updateUser/' + body.email,
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(putData)
+    }
+  };
+
+  const request = http.request(options, (response) => {
+    console.log(`STATUS: ${response.statusCode}`);
+    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+    response.setEncoding('utf8');
+    let data = '';
+    response.on('data', (chunk) => {
+      console.log('hiers')
+      data += chunk;
+    });
+    response.on('end', () => {
+      console.log("dast ist die data" + data)
+      res.send(data);
+    });
+  });
+
+  request.on('error', (e) => {
+    console.error(`problem with request: ${e.message}`);
+  });
+
+  request.write(putData);
+  request.end();
+});
 
 
 app.delete("/deleteEvent/:id", (req, res) => {

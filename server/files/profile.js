@@ -1,4 +1,4 @@
-function Register() {
+function Update() {
   const firstname = document.getElementById("firstname").value;
   const lastname = document.getElementById("lastname").value;
   const email = document.getElementById("email").value;
@@ -15,13 +15,28 @@ function Register() {
   xhr.onload = function() {
     if (xhr.status == 200) {
       const response = JSON.parse(xhr.responseText);
-      window.location.href = "index.html";
+      window.location.href = "homepage.html";
     } else {
       console.log('Request failed. Status:', xhr.status);
     }
   };
 
-  xhr.open('POST', '/register');
+  xhr.open('PUT', '/updateUser');
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(JSON.stringify(data));
 }
+
+window.onload = function() {
+
+  const data = JSON.parse(sessionStorage.getItem("userFull"))
+  const firstname = document.getElementById("firstname")
+  const lastname = document.getElementById("lastname")
+  const email = document.getElementById("email")
+  
+  console.log(data)
+  console.log(data.firstName)
+  firstname.value = data.firstName
+  lastname.value = data.lastName
+  email.value = data.email
+
+};
