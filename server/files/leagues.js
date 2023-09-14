@@ -57,6 +57,7 @@ function getData(source) {
                 if (xhr2.status == 200) {
                     const data = JSON.parse(xhr2.responseText);
                     for (match of data) {
+                          console.log("asdf2:" + JSON.stringify(match.id))  //hier dann auch eventid
                         if (document.contains(document.getElementById(match.eventId))) {
                             const favButton = document.getElementById(match.eventId)
                             favButton.style.color = "green"
@@ -85,6 +86,10 @@ function appendMatches(data) {
     matches.classList.add("centered-container");
   
     for (const match of data) {
+        console.log("TEST: " + JSON.stringify(data))
+        console.log("wie tf: " + match.id)
+        console.log("alles1: " + match.eventID)
+  
         const tableRow = document.createElement("tr");
         const addToFavoritesButton = document.createElement("button");
 
@@ -132,7 +137,12 @@ function appendMatches(data) {
         addToFavoritesButton.style.width = '60px';
         addToFavoritesButton.style.marginTop = '22px'
         addToFavoritesButton.setAttribute("data-match-id", match.eventID);
-        addToFavoritesButton.id = match.eventID
+        addToFavoritesButton.id = match.eventID //hier anstatt eventID  muss die normale ID stehen 16xx antatt 836xxx
+        //das /deleteEvent/ nimmt als id die 16xx, diese 16xx kommt aber nur wenn man nur zb localhost:8081/storage-service/getAllEventsForUser/1753 
+        //aufruft ka woher die id kommt, die gibt es aber nirgendwo lol
+       
+        console.log("ID von MAtch:" + addToFavoritesButton.id)
+        console.log("ID von MAtch:11333125" + sessionStorage.getItem('user'));
 
         addToFavoritesButton.addEventListener("click", function(event) {
             addEvent(match, event);
@@ -147,22 +157,25 @@ function appendMatches(data) {
 
 function addEvent(source, event) {
     const favoriteButton = event.target
-    if (favoriteButton.style.color == "green") {
+    if (favoriteButton.style.color === "green") {
         const xhr = new XMLHttpRequest();
         xhr.onload = function() {
-            if (xhr.status == 200) {
+            if (xhr.status == 200 || xhr.status == 201) {
                 favoriteButton.style.color = "black"
             } else {
                 console.log('Request failed. Status:', xhr.status);
             }
         };
-        
+        console.log("storage:1 " + sessionStorage.getItem('user'));
         xhr.open('DELETE', "/deleteEvent/" + favoriteButton.id);
+        //normale id anstatt eventid
         xhr.send();
+        console.log("storage:2 " + sessionStorage.getItem('user'));
+      
     } else {
         const xhr = new XMLHttpRequest();
         xhr.onload = function() {
-            if (xhr.status == 200) {
+            if (xhr.status == 200 || xhr.status == 201) {
                 const data = JSON.parse(xhr.responseText);
                 console.log(data)
                 favoriteButton.style.color = "green"
@@ -177,44 +190,14 @@ function addEvent(source, event) {
     }
 }
 
-function addMatchToFavorites(eventId, matchId) {
-    
-    const favorites = getFavoritesFromCookie(eventId);
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutButton = document.getElementById('logoutButton');
 
-    if (!favorites.includes(matchId)) {
-        favorites.push(matchId);
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            sessionStorage.removeItem('user');
+            window.location.href = "index.html";
+        });
     }
-
-    setFavoritesCookie(eventId, favorites);
-
-}
-
-function getFavoritesFromCookie(eventId) {
-    const favoritesCookie = getCookie(`favorites_${eventId}`);
-    if (favoritesCookie) {
-        return JSON.parse(favoritesCookie);
-    }
-    return [];
-}
-
-function setFavoritesCookie(eventId, favorites) {
-    const favoritesCookie = JSON.stringify(favorites);
-    setCookie(`favorites_${eventId}`, favoritesCookie);
-}
-
-function getCookie(name) {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split("; ");
-    for (const cookie of cookies) {
-        const [cookieName, cookieValue] = cookie.split("=");
-        if (cookieName === name) {
-            return decodeURIComponent(cookieValue);
-        }
-    }
-    return null;
-}
-
-function setCookie(name, value) {
-    const cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
-    document.cookie = cookieString;
-}
+});

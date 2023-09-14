@@ -56,9 +56,6 @@ function transformAPIData(data) {
   };
 }
 function transformServerToApiData(data) {
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric' };
-  const date = new Date(data.eventDate).toLocaleString('de-DE', options);
-  const date1 = new Date(data.createDate).toLocaleString('de-DE', options);
 
   return {
     id: data.id,
@@ -82,6 +79,7 @@ function transformEvent(data, id) {
   }
   return {
     user: user,
+    id: data.id,
     eventId: data.eventID,
     eventDate: date,
     eventName: data.teams.home.name + " VS " + data.teams.away.name
@@ -331,6 +329,7 @@ app.put('/updateUser', function (req, res) {
 
 app.delete("/deleteEvent/:id", (req, res) => {
   const postData = req.params.id;
+  console.log('Deleting event with ID:', postData);
   const options = {
     hostname: 'localhost',
     port: 8081,
@@ -344,6 +343,7 @@ app.delete("/deleteEvent/:id", (req, res) => {
      response.setEncoding('utf8');
      response.on('data', (chunk) => {
       console.log(chunk)
+      
      });
      response.on('end', () => {
         res.sendStatus(200);

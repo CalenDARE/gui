@@ -10,21 +10,6 @@ const backDrop = document.getElementById('modalBackDrop');
 const eventTitleInput = document.getElementById('eventTitleInput');
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-function openModal(date) {
-  clicked = date;
-
-  const eventForDay = events.find(e => e.date === clicked);
-
-  if (eventForDay) {
-    document.getElementById('eventText').innerText = eventForDay.title;
-    deleteEventModal.style.display = 'block';
-  } else {
-    newEventModal.style.display = 'block';
-  }
-
-  backDrop.style.display = 'block';
-}
-
 function load() {
   const dt = new Date();
 
@@ -85,22 +70,25 @@ function load() {
 
   getEventsForUser()
 }
-
 function getEventsForUser() {
   const xhr = new XMLHttpRequest();
   xhr.onload = function() {
     if (xhr.status == 200) {
       const data = JSON.parse(xhr.responseText);
       for (match of data) {
-        let month = new Date().getMonth() + 1
+        let month = new Date().getMonth() + 1;
         if (nav !== 0) {
           month = month + nav;
         }
-        if ((new Date(match.eventDate).getMonth() + 1) === month) {
-          const matchDay = document.getElementById(new Date(match.eventDate).getDay() + 1)
+        const eventDate = new Date(match.eventDate);
+        const eventMonth = eventDate.getMonth() + 1;
+          //console.log
+        if (eventMonth === month) {
+          const dayOfMonth = eventDate.getDate();
+          const matchDay = document.getElementById(dayOfMonth);
           if (matchDay) {
-            matchDay.id = 'matchDay'
-            matchDay.textContent += "  " + match.eventName
+            matchDay.id = 'matchDay';
+            matchDay.textContent += "  " + match.eventName;
           }
         }
       }
@@ -112,6 +100,8 @@ function getEventsForUser() {
   xhr.open('GET', '/getEventsForUser/' + sessionStorage.getItem("user"));
   xhr.send();
 }
+
+
 
 function displayEventsForDay(dayString) {
     const xhr = new XMLHttpRequest();
@@ -126,16 +116,6 @@ function displayEventsForDay(dayString) {
   
     xhr.open('GET', '/getEventsForUser/' + sessionStorage.getItem("user"));
     xhr.send();
-}
-
-function closeModal() {
-  eventTitleInput.classList.remove('error');
-  newEventModal.style.display = 'none';
-  deleteEventModal.style.display = 'none';
-  backDrop.style.display = 'none';
-  eventTitleInput.value = '';
-  clicked = null;
-  load();
 }
 
 function saveEvent() {
@@ -154,11 +134,7 @@ function saveEvent() {
   }
 }
 
-function deleteEvent() {
-  events = events.filter(e => e.date !== clicked);
-  localStorage.setItem('events', JSON.stringify(events));
-  closeModal();
-}
+
 
 function initButtons() {
   document.getElementById('nextButton').addEventListener('click', () => {
@@ -171,10 +147,6 @@ function initButtons() {
     load();
   });
 
-  document.getElementById('saveButton').addEventListener('click', saveEvent);
-  document.getElementById('cancelButton').addEventListener('click', closeModal);
-  document.getElementById('deleteButton').addEventListener('click', deleteEvent);
-  document.getElementById('closeButton').addEventListener('click', closeModal);
 }
 
 window.onload = function() {
@@ -191,6 +163,18 @@ window.onload = function() {
   xhr.open('GET', '/getAllEvents');
   xhr.send();
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutButton = document.getElementById('logoutButton');
+
+  if (logoutButton) {
+      logoutButton.addEventListener('click', function(event) {
+          event.preventDefault();
+          sessionStorage.removeItem('user');
+          window.location.href = "index.html";
+      });
+  }
+});
 
 initButtons();
 load();
