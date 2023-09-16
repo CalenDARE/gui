@@ -482,3 +482,12 @@ td {
   font-size: 30px;
   color: #fff;
 }
+
+.error-box {
+  background-color: #ff0000;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}

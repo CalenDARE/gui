@@ -208,7 +208,6 @@ app.post("/addEvent/:id", (req, res) => {
      console.error(`problem with request: ${e.message}`);
    });
   
-   // Write data to request body
    request.write(postData);
    request.end();
 });
@@ -353,8 +352,6 @@ app.delete("/deleteEvent/:id", (req, res) => {
    request.on('error', (e) => {
      console.error(`problem with request: ${e.message}`);
    });
-  
-   // Write data to request body
    
    request.end();
 });

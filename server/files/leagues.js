@@ -1,10 +1,11 @@
 function addLeagues(sport) {
+
     if (sport == "dota") {
-        appendHeader("EPL")
+        appendHeader("EPL");
     } else if (sport == "valorant") {
-        appendHeader("EMEA", "PACIFIC")
+        appendHeader("EMEA", "PACIFIC");
     } else if (sport == "lol") {
-        appendHeader("LEC", "LCS", "LCK")
+        appendHeader("LEC", "LCS", "LCK");
     }
 }
 
@@ -51,16 +52,16 @@ function getData(source) {
     xhr.onload = function() {
         if (xhr.status == 200) {
             const data = JSON.parse(xhr.responseText);
-            appendMatches(data)
+            appendMatches(data);
             const xhr2 = new XMLHttpRequest();
             xhr2.onload = function() {
                 if (xhr2.status == 200) {
                     const data = JSON.parse(xhr2.responseText);
                     for (match of data) {
-                          console.log("asdf2:" + JSON.stringify(match.id))  //hier dann auch eventid
+                          console.log("asdf2:" + JSON.stringify(match.id))
                         if (document.contains(document.getElementById(match.eventId))) {
-                            const favButton = document.getElementById(match.eventId)
-                            favButton.style.color = "green"
+                            const favButton = document.getElementById(match.eventId);
+                            favButton.style.color = "green";
                         }
                     }
                 } else {
@@ -71,7 +72,7 @@ function getData(source) {
             xhr2.open('GET', "/getEventsForUser/" + sessionStorage.getItem("user"));
             xhr2.send(); 
         } else {
-        console.log('Request failed. Status:', xhr.status);
+            console.log('Request failed. Status:', xhr.status);
         }
     };
     
@@ -113,6 +114,7 @@ function appendMatches(data) {
         tableRow.appendChild(homeLogoCol);
 
         homeTeamCol.textContent = match.teams.home.name;
+    
         tableRow.appendChild(homeTeamCol);
 
         vsListCol.textContent = "VS";
@@ -142,12 +144,12 @@ function appendMatches(data) {
         //aufruft ka woher die id kommt, die gibt es aber nirgendwo lol
        
         console.log("ID von MAtch:" + addToFavoritesButton.id)
-        console.log("ID von MAtch:11333125" + sessionStorage.getItem('user'));
+        console.log("stoarage: " + sessionStorage.getItem("user"));
 
         addToFavoritesButton.addEventListener("click", function(event) {
             addEvent(match, event);
         });
-
+    
         tableRow.appendChild(addToFavoritesButton);
         matches.appendChild(tableRow);
     }
@@ -189,10 +191,15 @@ function addEvent(source, event) {
         xhr.send(JSON.stringify(source));
     }
 }
+function isUserLoggedIn() {
+    const user = sessionStorage.getItem("user");
+    return user !== null && user !== undefined;
+  }
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.getElementById('logoutButton');
-
+  
     if (logoutButton) {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault();
@@ -200,4 +207,9 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = "index.html";
         });
     }
-});
+  
+    if (!isUserLoggedIn() && !window.location.pathname.endsWith("index.html")) {
+        window.location.href = "index.html";
+        alert("Bitte zuerst einloggen");
+    }
+  });

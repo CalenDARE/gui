@@ -108,7 +108,6 @@ function displayEventsForDay(dayString) {
     xhr.onload = function() {
       if (xhr.status == 200) {
         const data = JSON.parse(xhr.responseText);
-        // Handle the received data as per your requirements
       } else {
         console.log('Request failed. Status:', xhr.status);
       }
@@ -135,7 +134,6 @@ function saveEvent() {
 }
 
 
-
 function initButtons() {
   document.getElementById('nextButton').addEventListener('click', () => {
     nav++;
@@ -154,7 +152,6 @@ window.onload = function() {
   xhr.onload = function() {
     if (xhr.status == 200) {
       const data = JSON.parse(xhr.responseText);
-      // Handle the received data as per your requirements
     } else {
       console.log('Request failed. Status:', xhr.status);
     }
@@ -163,6 +160,12 @@ window.onload = function() {
   xhr.open('GET', '/getAllEvents');
   xhr.send();
 };
+
+function isUserLoggedIn() {
+  const user = sessionStorage.getItem("user");
+  return user !== null && user !== undefined;
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
   const logoutButton = document.getElementById('logoutButton');
@@ -173,6 +176,11 @@ document.addEventListener('DOMContentLoaded', function() {
           sessionStorage.removeItem('user');
           window.location.href = "index.html";
       });
+  }
+
+  if (!isUserLoggedIn() && !window.location.pathname.endsWith("index.html")) {
+      window.location.href = "index.html";
+      alert("Bitte zuerst einloggen");
   }
 });
 
