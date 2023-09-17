@@ -84,7 +84,7 @@ function transformEvent(data, id) {
     id: data.id,
     eventId: data.eventID,
     eventDate: date,
-    eventName: data.teams.home.name + " VS " + data.teams.away.name
+    eventName: (data.teams.home ? data.teams.home.name : "TBD") + " VS " + (data.teams.away ? data.teams.away.name : "TBD")
   };
 }
 

@@ -1,5 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700);
-@import url(https://weloveiconfonts.com/api/?family=entypo|fontawesome|zocial);
+
 /* entypo */
 [class*="entypo-"]:before {
   font-family: 'entypo', sans-serif;

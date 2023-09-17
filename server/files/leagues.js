@@ -57,7 +57,6 @@ function getData(source) {
                 if (xhr2.status == 200) {
                     const data = JSON.parse(xhr2.responseText);
                     for (match of data) {
-                          console.log("asdf2:" + JSON.stringify(match.id))
                         if (document.contains(document.getElementById(match.eventId))) {
                             const favButton = document.getElementById(match.eventId);
                             favButton.style.color = "green";
@@ -86,10 +85,6 @@ function appendMatches(data) {
     matches.classList.add("centered-container");
   
     for (const match of data) {
-        console.log("TEST: " + JSON.stringify(data))
-        console.log("wie tf: " + match.id)
-        console.log("alles1: " + match.eventID)
-  
         const tableRow = document.createElement("tr");
         const addToFavoritesButton = document.createElement("button");
 
@@ -171,12 +166,7 @@ function appendMatches(data) {
         addToFavoritesButton.style.width = '60px';
         addToFavoritesButton.style.marginTop = '22px'
         addToFavoritesButton.setAttribute("data-match-id", match.eventID);
-        addToFavoritesButton.id = match.eventID //hier anstatt eventID  muss die normale ID stehen 16xx antatt 836xxx
-        //das /deleteEvent/ nimmt als id die 16xx, diese 16xx kommt aber nur wenn man nur zb localhost:8081/storage-service/getAllEventsForUser/1753 
-        //aufruft ka woher die id kommt, die gibt es aber nirgendwo lol
-       
-        console.log("ID von MAtch:" + addToFavoritesButton.id)
-        console.log("stoarage: " + sessionStorage.getItem("user"));
+        addToFavoritesButton.id = match.eventID 
 
         addToFavoritesButton.addEventListener("click", function(event) {
             addEvent(match, event);
@@ -200,18 +190,15 @@ function addEvent(source, event) {
                 console.log('Request failed. Status:', xhr.status);
             }
         };
-        console.log("storage:1 " + sessionStorage.getItem('user'));
         xhr.open('DELETE', "/deleteEvent/" + favoriteButton.id + '/' + sessionStorage.getItem('user'));
         //normale id anstatt eventid
         xhr.send();
-        console.log("storage:2 " + sessionStorage.getItem('user'));
       
     } else {
         const xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if (xhr.status == 200 || xhr.status == 201) {
                 const data = JSON.parse(xhr.responseText);
-                console.log(data)
                 favoriteButton.style.color = "green"
             } else {
                 console.log('Request failed. Status:', xhr.status);
