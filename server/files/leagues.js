@@ -201,7 +201,7 @@ function addEvent(source, event) {
             }
         };
         console.log("storage:1 " + sessionStorage.getItem('user'));
-        xhr.open('DELETE', "/deleteEvent/" + favoriteButton.id);
+        xhr.open('DELETE', "/deleteEvent/" + favoriteButton.id + '/' + sessionStorage.getItem('user'));
         //normale id anstatt eventid
         xhr.send();
         console.log("storage:2 " + sessionStorage.getItem('user'));

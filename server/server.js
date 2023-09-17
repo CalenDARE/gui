@@ -330,13 +330,14 @@ app.put('/updateUser', function (req, res) {
 });
 
 
-app.delete("/deleteEvent/:id", (req, res) => {
+app.delete("/deleteEvent/:id/:userId", (req, res) => {
   const postData = req.params.id;
+  const userId = req.params.userId
   console.log('Deleting event with ID:', postData);
   const options = {
     hostname: 'localhost',
     port: 8081,
-    path: '/storage-service/deleteEventById/' + postData,
+    path: '/storage-service/deleteEventById/' + postData + "/" + userId,
      method: 'DELETE'
    };
 
