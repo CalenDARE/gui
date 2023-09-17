@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const https = require("https");
 const http = require("http");
 const bodyParser = require("body-parser");
 const axios = require("axios");
@@ -17,44 +18,45 @@ app.use(express.static(path.join(__dirname, "files")));
 
 function transformAPIData(data) {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric' };
-  const date = new Date(data.event.date).toLocaleString('de-DE', options);
-
-  const venue = data.event.venue ? {
-    id: data.event.venue.id,
-    name: data.event.venue.name,
-    city: data.event.venue.city,
-  } : null;
+  const date = new Date(data.begin_at).toLocaleString('de-DE', options);
 
   const league = {
     id: data.league.id,
     name: data.league.name,
-    country: data.league.country || null,
-    logo: data.league.logo,
-    flag: data.league.flag || null,
-    season: data.league.season,
+    logo: data.league.image_url
   };
-
-  const teams = {
-    home: {
-      id: data.teams.home.id,
-      name: data.teams.home.name,
-      logo: data.teams.home.logo,
-    },
-    away: {
-      id: data.teams.away.id,
-      name: data.teams.away.name,
-      logo: data.teams.away.logo,
-    },
-  };
+  let teams = ''
+  if (data.opponents && Array.isArray(data.opponents) && data.opponents.length == 2) {
+    teams = {
+      home: {
+        id: data.opponents[0].opponent.id,
+        name: data.opponents[0].opponent.name,
+        logo: data.opponents[0].opponent.image_url
+      },
+      away: {
+        id: data.opponents[1].opponent.id,
+        name: data.opponents[1].opponent.name,
+        logo: data.opponents[1].opponent.image_url
+      }
+    }
+  } else if (data.opponents && Array.isArray(data.opponents) && data.opponents.length == 1) {
+    teams = {
+      home: {
+        id: data.opponents[0].opponent.id,
+        name: data.opponents[0].opponent.name,
+        logo: data.opponents[0].opponent.image_url
+      }
+    }
+  }
 
   return {
-    eventID: data.event.id,
+    eventID: data.id,
     date: date,
-    venue: venue,
     league: league,
     teams: teams,
   };
 }
+
 function transformServerToApiData(data) {
 
   return {
@@ -87,29 +89,63 @@ function transformEvent(data, id) {
 }
 
 
-app.get('/LEC', function (req, res) {
-  callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4197', res)
+app.get('/ESL', function (req, res) {
+  callScheduleApi('/csgo/matches/upcoming?filter[league_id]=4568', res)
 });
 
-app.get('/LCS', function (req, res) {
-  callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=4198', res)
+app.get('/WINLINE', function (req, res) {
+  callScheduleApi('/csgo/matches/upcoming?filter[league_id]=4776', res)
 });
 
-app.get('/LCK', function (req, res) {
-  callScheduleApi('http://localhost:8080/data-service/lol/schedule?id=293', res)
+app.get('/GameChangers', function (req, res) {
+  callScheduleApi('/valorant/matches/upcoming?filter[league_id]=4531', res)
 });
 
-app.get('/EPL', function (req, res) {
-  callScheduleApi('http://localhost:8080/data-service/dota2/schedule?id=4807', res)
+app.get('/Worlds', function (req, res) {
+  callScheduleApi('/lol/matches/upcoming?filter[league_id]=297', res)
 });
 
-app.get('/EMEA', function (req, res) {
-  callScheduleApi('http://localhost:8080/data-service/valorant/schedule?id=4947', res)
+app.get('/LFL', function (req, res) {
+  callScheduleApi('/lol/matches/upcoming?filter[league_id]=4292', res)
 });
 
-app.get('/PACIFIC', function (req, res) {
-  callScheduleApi('http://localhost:8080/data-service/valorant/schedule?id=4531', res)
-});
+//app.put('/storage-service/updateUser/{email},')
+
+function callScheduleApi(url, res)
+{
+  const options = {
+    protocol: 'https:',
+    hostname: 'api.pandascore.co',
+    path: url,
+    headers: {
+      Authorization: 'Bearer MQW4FqVVrwCSfRSa6zpLN1DwdMaA_n93LEFKcP1o10cgtnUAyS8'
+    }
+  }
+  https.get(options, (resp) => {
+    let data = '';
+
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    resp.on('end', () => {
+      try {
+        const jsonData = JSON.parse(data);
+        let transformedData = [];
+        if (jsonData && Array.isArray(jsonData)) {
+          transformedData = jsonData.map(transformAPIData);
+        }
+        res.send(transformedData);
+
+      } catch (error) {
+        console.log('Error parsing JSON:', error);
+        res.status(500).send('Error parsing JSON');
+      }
+    });
+  }).on('error', (err) => {
+    console.log('Error:', err.message);
+    res.status(500).send('Error fetching data');
+})};
 
 app.get('/getAllEvents', function (req, res) {
   callEventsApi("http://localhost:8081/storage-service/getAllEvents", res);
@@ -118,8 +154,6 @@ app.get('/getAllEvents', function (req, res) {
 app.get('/getEventsForUser/:id', function (req, res) {
   callEventsApi("http://localhost:8081/storage-service/getAllEventsForUser/" + req.params.id, res);
 });
-
-//app.put('/storage-service/updateUser/{email},')
 
 function callEventsApi(url, res) {
   http.get(url, (resp) => {
@@ -146,36 +180,6 @@ function callEventsApi(url, res) {
     res.status(500).send('Error fetching data');
   })
 };
-
-function callScheduleApi(url, res)
-{
-  http.get(url, (resp) => {
-    let data = '';
-
-    resp.on('data', (chunk) => {
-      data += chunk;
-    });
-
-    resp.on('end', () => {
-      try {
-        const jsonData = JSON.parse(data);
-        let transformedData = [];
-
-        if (jsonData.response && Array.isArray(jsonData.response)) {
-          transformedData = jsonData.response.map(transformAPIData);
-        }
-
-        res.send(transformedData);
-
-      } catch (error) {
-        console.log('Error parsing JSON:', error);
-        res.status(500).send('Error parsing JSON');
-      }
-    });
-  }).on('error', (err) => {
-    console.log('Error:', err.message);
-    res.status(500).send('Error fetching data');
-})};
 
 app.post("/addEvent/:id", (req, res) => {
   const postData = JSON.stringify(transformEvent(req.body, req.params.id));

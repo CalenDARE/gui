@@ -1,11 +1,10 @@
 function addLeagues(sport) {
-
-    if (sport == "dota") {
-        appendHeader("EPL");
+    if (sport == "lol") {
+        appendHeader("Worlds", "LFL")
     } else if (sport == "valorant") {
-        appendHeader("EMEA", "PACIFIC");
-    } else if (sport == "lol") {
-        appendHeader("LEC", "LCS", "LCK");
+        appendHeader("GameChangers")
+    } else if (sport == "cs") {
+        appendHeader("ESL", "WINLINE")
     }
 }
 
@@ -106,31 +105,64 @@ function appendMatches(data) {
         dateListCol.style.paddingRight = '100px';
         tableRow.appendChild(dateListCol);
 
-        const homeLogo = document.createElement("img");
-        homeLogo.src = match.teams.home.logo;
-        homeLogo.width = 70;
-        homeLogo.height = 70;
-        homeLogoCol.appendChild(homeLogo);
-        tableRow.appendChild(homeLogoCol);
-
-        homeTeamCol.textContent = match.teams.home.name;
+        if (match.teams.home) {
+            const homeLogo = document.createElement("img");
+            if (match.teams.home.logo) {
+                homeLogo.src = match.teams.home.logo;
+            } else {
+                homeLogo.src = 'images/missing.png'
+            }
+            homeLogo.width = 70;
+            homeLogo.height = 70;
+            homeLogoCol.appendChild(homeLogo);
+            tableRow.appendChild(homeLogoCol);
     
-        tableRow.appendChild(homeTeamCol);
+            homeTeamCol.textContent = match.teams.home.name;
+            tableRow.appendChild(homeTeamCol);
+        } else {
+            const tbdLogo = document.createElement("img");
+            tbdLogo.src = 'images/TBD-W.svg.png'
+            tbdLogo.width = 70;
+            tbdLogo.height = 70;
+            homeLogoCol.appendChild(tbdLogo);
+            tableRow.appendChild(homeLogoCol);
+    
+            homeTeamCol.textContent = 'TBD';
+            tableRow.appendChild(homeTeamCol);
+        }
 
         vsListCol.textContent = "VS";
         tableRow.appendChild(vsListCol);
 
-        awayTeamCol.textContent = match.teams.away.name;
-        awayTeamCol.style.textAlign = "right";
-        tableRow.appendChild(awayTeamCol);
-
-        const awayLogo = document.createElement("img");
-        awayLogo.src = match.teams.away.logo;
-        awayLogo.width = 70;
-        awayLogo.height = 70;
-        awayLogoCol.appendChild(awayLogo);
-        awayLogoCol.style.paddingRight = '250px';
-        tableRow.appendChild(awayLogoCol);
+        if (match.teams.away) {
+            awayTeamCol.textContent = match.teams.away.name;
+            awayTeamCol.style.textAlign = "right";
+            tableRow.appendChild(awayTeamCol);
+    
+            const awayLogo = document.createElement("img");
+            if (match.teams.away.logo) {
+                awayLogo.src = match.teams.away.logo;
+            } else {
+                awayLogo.src = 'images/missing.png'
+            }
+            awayLogo.width = 70;
+            awayLogo.height = 70;
+            awayLogoCol.appendChild(awayLogo);
+            awayLogoCol.style.paddingRight = '250px';
+            tableRow.appendChild(awayLogoCol);
+        } else {
+            awayTeamCol.textContent = 'TBD';
+            awayTeamCol.style.textAlign = "right";
+            tableRow.appendChild(awayTeamCol);
+    
+            const tbdLogo = document.createElement("img");
+            tbdLogo.src = 'images/TBD-W.svg.png'
+            tbdLogo.width = 70;
+            tbdLogo.height = 70;
+            awayLogoCol.appendChild(tbdLogo);
+            awayLogoCol.style.paddingRight = '250px';
+            tableRow.appendChild(awayLogoCol);
+        }
 
         addToFavoritesButton.textContent = "❤";
         addToFavoritesButton.style.fontSize = "40px";
