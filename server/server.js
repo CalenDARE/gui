@@ -293,28 +293,30 @@ function transformUser(data) {
   };
 }
 
-app.put('/updateUser', function (req, res) {
-  const body = transformUser(req.body)
-  const putData = JSON.stringify(body);
+app.put('/updateUser/:email', (req, res) => {
+  const { firstName, lastName, email, password} = req.body;
+  const postData = JSON.stringify({ firstName, lastName, email, password });
 
   const options = {
     hostname: 'localhost',
     port: 8081,
-    path: '/storage-service/updateUser/' + body.email,
+    path: '/storage-service/updateUser/' + req.params.email,
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(putData)
+      'Content-Length': Buffer.byteLength(postData)
     }
   };
 
   const request = http.request(options, (response) => {
     console.log(`STATUS: ${response.statusCode}`);
     console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
+    console.log(req.params.email + postData)
     response.setEncoding('utf8');
     let data = '';
     response.on('data', (chunk) => {
       data += chunk;
+      console.log("hier" + data)
     });
     response.on('end', () => {
       res.send(data);
@@ -322,10 +324,10 @@ app.put('/updateUser', function (req, res) {
   });
 
   request.on('error', (e) => {
-    console.error(`problem with request: ${e.message}`);
+    res.status(500).send('Interner Serverfehler');
   });
 
-  request.write(putData);
+  request.write(postData);
   request.end();
 });
 

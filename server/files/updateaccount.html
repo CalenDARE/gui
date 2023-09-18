@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update</title>
+  <script src="updateaccount.js"></script>
+</head>
+<body>
+  <h1>Update Email</h1>
+  <form>
+    <label for="first-name">Vorname:</label>
+    <input type="text" id="firstname" name="firstname" required><br>
+
+    <label for="last-name">Nachname:</label>
+    <input type="text" id="lastname" name="lastname" required><br>
+
+    <label for="email">old e-mail</label>
+    <input type="email" id="email1" name="email1" required><br>
+
+    <label for="email">new e-mail</label>
+    <input type="email" id="email2" name="email2" required><br>
+
+    <label for="password">Passwort:</label>
+    <input type="password" id="password" name="password" required><br>
+
+    <button type="button" id="update-button" onclick=UpdateEmail()>Update</button>
+  </form>
+</body>
+</html>
