@@ -143,8 +143,8 @@ function callScheduleApi(url, res)
       }
     });
   }).on('error', (err) => {
-    console.log('Error:', err.message);
-    res.status(500).send('Error fetching data');
+    //console.log('Error:', err.message);
+    //res.status(500).send('Error fetching data');
 })};
 
 app.get('/getAllEvents', function (req, res) {
@@ -165,10 +165,10 @@ function callEventsApi(url, res) {
 
     resp.on('end', () => {
       try {
-        const jsonData = JSON.parse(data);
-        let transformedData = [];
-        transformedData = jsonData.map(transformServerToApiData);
-        res.send(transformedData);
+          const jsonData = JSON.parse(data);
+          let transformedData = [];
+          transformedData = jsonData.map(transformServerToApiData);
+          res.send(transformedData);
 
       } catch (error) {
         console.log('Error parsing JSON:', error);
@@ -176,8 +176,8 @@ function callEventsApi(url, res) {
       }
     });
   }).on('error', (err) => {
-    console.log('Error:', err.message);
-    res.status(500).send('Error fetching data');
+    //console.log('Error:', err.message);
+    //res.status(500).send('Error fetching data');
   })
 };
 
@@ -197,7 +197,6 @@ app.post("/addEvent/:id", (req, res) => {
 
    const request = http.request(options, (response) => {
      console.log(`STATUS: ${response.statusCode}`);
-     console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
      response.setEncoding('utf8');
      let data = '';
      response.on('data', (chunk) => {
@@ -237,8 +236,8 @@ app.get("/auth/:email/:password", (req, res) => {
         delete jsonData.events
         res.send(jsonData);
       } catch (error) {
-        console.log('Error parsing JSON:', error);
-        res.status(500).send('Error parsing JSON');
+        //console.log('Error parsing JSON:', error);
+        //res.status(500).send('Error parsing JSON');
       }
     });
   }).on('error', (err) => {
@@ -265,7 +264,6 @@ app.post("/register", (req, res) => {
 
   const request = http.request(options, (response) => {
     console.log(`STATUS: ${response.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
     response.setEncoding('utf8');
     let data = '';
     response.on('data', (chunk) => {
@@ -310,13 +308,10 @@ app.put('/updateUser/:email', (req, res) => {
 
   const request = http.request(options, (response) => {
     console.log(`STATUS: ${response.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-    console.log(req.params.email + postData)
     response.setEncoding('utf8');
     let data = '';
     response.on('data', (chunk) => {
       data += chunk;
-      console.log("hier" + data)
     });
     response.on('end', () => {
       res.send(data);
@@ -335,7 +330,6 @@ app.put('/updateUser/:email', (req, res) => {
 app.delete("/deleteEvent/:id/:userId", (req, res) => {
   const postData = req.params.id;
   const userId = req.params.userId
-  console.log('Deleting event with ID:', postData);
   const options = {
     hostname: 'localhost',
     port: 8081,
@@ -345,11 +339,8 @@ app.delete("/deleteEvent/:id/:userId", (req, res) => {
 
    const request = http.request(options, (response) => {
      console.log(`STATUS: ${response.statusCode}`);
-     console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
      response.setEncoding('utf8');
      response.on('data', (chunk) => {
-      console.log(chunk)
-      
      });
      response.on('end', () => {
         res.sendStatus(200);

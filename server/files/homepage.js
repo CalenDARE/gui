@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (logoutButton) {
       logoutButton.addEventListener('click', function(event) {
           event.preventDefault();
+          sessionStorage.removeItem('userFull');
           sessionStorage.removeItem('user');
           window.location.href = "index.html";
       });
