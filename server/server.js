@@ -216,8 +216,8 @@ app.post("/addEvent/:id", (req, res) => {
    request.end();
 });
 
-app.get("/auth/:email", (req, res) => {
-  http.get("http://localhost:8081/storage-service/getUser/" + req.params.email, (resp) => {
+app.get("/auth/:email/:password", (req, res) => {
+  http.get("http://localhost:8081/storage-service/login/" + req.params.email + "/" + req.params.password, (resp) => {
     let data = '';
 
     resp.on('data', (chunk) => {

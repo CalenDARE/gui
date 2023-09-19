@@ -53,13 +53,12 @@ function Auth() {
         sessionStorage.setItem("userFull", JSON.stringify(response))
         window.location.href = "homepage.html";
       } else {
-        console.log('Request failed. Status:', xhr.status);
+        alert("Email oder Passwort ist falsch");
       }
     };
   
-    xhr.open('GET', '/auth/' + email);
+    xhr.open('GET', '/auth/' + email + '/' + password);
     xhr.send();
   }
   
-
 window.addEventListener("load", mainF);
